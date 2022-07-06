@@ -22,10 +22,35 @@
 
 ----> partie Marco 
 - Ceation d'un back-end en nodeJS
-	- base de donner PostgreSQL
+	- les donner a retenir : 
+		- utilisateur
+			- option de personnalisation 
+			- nom 
+			- mot de passe
+			- avatar 
+			- liste d amis
+			- les statistique du joueur
+				- nb victoire 
+				- nb deffaite 
+				- classement
+			- historique du joueur 
+				- score des match 
+				- nom des adrversaire
+				- classement de la partie
+			- sa liste de channel
+				- sont status sur chaque channel
+		- liste des channel 
+			- utilisateur sur chaque channel
+				- et leur droit 
+			- status du channel 
+			- mot de passe
 - Mise en place des container
 	- docker en mode rootless
-	- fichier d'execution docker doive aller dans le goinfre ou sgoindre 
+	- fichier d'execution docker doive aller dans le goinfre ou sgoindre
+	- format des container : 
+		- container 1 base de donner : PostgreSQL
+		- container 2 pour fair tourner le front du site 
+		- container 3 nginx
 
 
 
