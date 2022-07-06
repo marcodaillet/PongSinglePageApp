@@ -21,6 +21,7 @@ services:
 
   nginx:
     restart: on-failure
+    #user: 1001:1001
     build:
       context: nginx/
     image : mbonnet/nginx
