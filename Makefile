@@ -18,4 +18,4 @@ sys-clean :
 
 doc-fclean : doc-clean img-clean vol-clean net-clean sys-clean
 	
-doc-re : doc-flean docker
+doc-re : doc-fclean docker
