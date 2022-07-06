@@ -5,16 +5,16 @@ doc-clean :
 	cd ./containers && docker-compose down --rmi all
 
 img-clean : 
-	docker image prune 
+	echo y | docker image prune 
 
 vol-clean : 
-	docker volume prune 
+	echo y |docker volume prune 
 
 net-clean : 
-	docker network prune 
+	echo y |docker network prune 
 
 sys-clean : 
-	docker system prune --volumes 
+	echo y | docker system prune --volumes 
 
 doc-fclean : doc-clean img-clean vol-clean net-clean sys-clean
 	
