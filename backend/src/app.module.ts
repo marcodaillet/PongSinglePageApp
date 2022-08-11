@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
+import { ChatModule } from './chat/chat.module';
 import { GameModule } from './game/game.module';
 import { AuthModule } from './user/authentication/authentication.module';
 
@@ -21,6 +22,7 @@ import { AuthModule } from './user/authentication/authentication.module';
       synchronize: true,
     }),
     UserModule,
+    ChatModule,
     GameModule,
     AuthModule
   ],

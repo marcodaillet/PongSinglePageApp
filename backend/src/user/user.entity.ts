@@ -1,4 +1,5 @@
 import {Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
+import { Chat } from './../chat/chat.entity'
 
 @Entity('users')
 export class User {
@@ -25,4 +26,9 @@ export class User {
     @ManyToMany(() => User)
     @JoinTable()
     friends: User[];
+    @ManyToMany(
+        () => Chat
+    )
+    @JoinTable()
+    myChat: Chat[];
 }

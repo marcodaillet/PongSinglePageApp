@@ -26,7 +26,7 @@ export class UserController {
     ) {}
 
     @UseGuards(verifyUser)
-    @Get()
+    @Get("all")
     async all(): Promise<User[]> {
         return this.userService.all();
     }
