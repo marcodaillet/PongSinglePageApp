@@ -6,7 +6,7 @@
 /*   By: mbonnet <mbonnet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 15:50:20 by mbonnet           #+#    #+#             */
-/*   Updated: 2022/08/10 18:04:11 by mbonnet          ###   ########.fr       */
+/*   Updated: 2022/08/11 10:05:03 by mbonnet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,11 +217,10 @@ export const Pong = () => {
 		ctx.fillText("Waiting...", myGame.canvasX/2 - 100 ,  myGame.canvasY/2);
 	}
 
-	function MesEnd(socket, data)
+	async function MesEnd(socket, data)
 	{
 		var res = new Historique();	
 		socket.emit('end', res);
-		end(socket, data);
 	}
 
 	function checkEnd(socket)
@@ -232,14 +231,16 @@ export const Pong = () => {
 			socket.emit('mouvWinner', {winner:2});
 	}
 
-	function end(socket, data)
+	async function end(socket, data)
 	{
 		let str;
 		ctx.fillStyle = "#000000";
 		if (data.userID === data.winner_id)
 			str = "Winner !"
+		else if (data.winner_id === 0)
+			str = "  End  "
 		else
-			str = "looser"
+			str = "looser !"
 		ctx.font = "15pt Calibri,Geneva,Arial";
 		ctx.fillText(str, myGame.canvasX/2 - 35 ,  myGame.canvasY/2 - 30);
 		ctx.font = "20pt Calibri,Geneva,Arial";
@@ -373,6 +374,10 @@ export const Pong = () => {
 	{
 		clean();
 		socket.emit('run', myGame)
+		socket.on('messageEnd', async (data)=> {
+			end(socket, data);
+		})
+
 		socket.on('run', async (data)=> {
 			await clean();
 			await draws();
@@ -382,7 +387,9 @@ export const Pong = () => {
 			if (myGame.winner === -1)
 				await setTimeout(forEmitRunWithTimeout, 1);
 			else
+			{
 				await MesEnd(socket, mydata);
+			}
 		})
 	}
 	

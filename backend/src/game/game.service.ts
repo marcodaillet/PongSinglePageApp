@@ -214,8 +214,11 @@ export class GameService {
 
     async mouvGameWinnerById(game: Games, winner: number){
         let mygame = await this.TakeGameById(game.id);
-        mygame.winner = winner;
-        this.GamesRepository.save(mygame);
+        if (mygame)
+        {
+            mygame.winner = winner;
+            this.GamesRepository.save(mygame);
+        }
     }
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@//
@@ -237,10 +240,14 @@ export class GameService {
         let id_raq2 = await this.TakeRaquetteById(game.raq2);	;
         let id_ball = await this.TakeBallById(game.ball_id);
         
-        await this.GamesRepository.remove(id_game);	
-        await this.RaquettesRepository.remove(id_raq1);	
-        await this.RaquettesRepository.remove(id_raq2);	
-        await this.BallsRepository.remove(id_ball);
+        if (id_game)
+            await this.GamesRepository.remove(id_game);	
+        if (id_raq1)
+            await this.RaquettesRepository.remove(id_raq1);	
+        if (id_raq2)    
+            await this.RaquettesRepository.remove(id_raq2);	
+        if (id_ball)
+            await this.BallsRepository.remove(id_ball);
     }
     @WebSocketServer()
 	server: Server;
@@ -283,8 +290,11 @@ export class GameService {
 		 	this.mouvRaq(data);
 		})
 		client.on('end', async (data) => {
-		 	this.end(data);
+		 	this.end(client, data);
 		})
+        client.on('disconnect', async (data) => {
+            this.mouvWinner(0);
+       })
     }
     
     async searchGame(data, client){
@@ -347,6 +357,8 @@ export class GameService {
             await this.mouvGameWinnerById(this.myGame, this.myRaq1.user_id);
         else if (winner === 2)
             await this.mouvGameWinnerById(this.myGame, this.myRaq2.user_id);
+        else if (winner === 0)
+            await this.mouvGameWinnerById(this.myGame, 0);
     }
 
     async mouvRaq(data)
@@ -366,10 +378,11 @@ export class GameService {
 
     }
 
-    async end(data)
+    async end(client, data)
     {
-        await this.insertHistorique(data);
+        let res = await this.insertHistorique(data);
         await this.delateGame(this.myGame);
+        client.emit('messageEnd',res);
     }
 }
 
