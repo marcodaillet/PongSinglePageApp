@@ -34,7 +34,7 @@ export class GameService {
 
     //@@@@@@@@@@@@@@@@@@@@@ insert game @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@//
 
-    async insertGame(canvasX, dificult, priv){
+    async insertGame(canvasX, dificult, priv, invite){
         const GameTmp: Games = new Games();
         GameTmp.ball_id = -1;
         GameTmp.canvasX = canvasX;
@@ -47,6 +47,8 @@ export class GameService {
         GameTmp.dificult = dificult;
         GameTmp.winner = -1;
         GameTmp.private = priv;
+        GameTmp.invite = invite;
+        GameTmp.timeStart = new Date();
         await this.GamesRepository.save(GameTmp);
         return (GameTmp);
     }
@@ -99,6 +101,10 @@ export class GameService {
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@//
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@//
 
+    async TakeGame(){
+        let Games = await this.GamesRepository.find()
+        return (Games);
+    }
     async TakeGameByRaq1(dif){
         let Game = await this.GamesRepository.findOneBy({
             raq1 : -1,
@@ -254,12 +260,13 @@ export class GameService {
 	handleConnection(client: Socket){
 		console.log("Socket connecter coter server!");
 	}
-	handleDistConnection(client: Socket){
+	handleDisConnection(client: Socket){
 		console.log("Socket deconnecter coter server!");
 	}
 	@SubscribeMessage('Lancer de comunication')
 	async handleEvent(@MessageBody() data, @ConnectedSocket() client: Socket)
 	{
+        await this.CleanGame(client, data);
         await this.searchGame(data, client);
         client.emit('initGame', {canvas:this.myGame.canvasX})
         client.emit('update', {myGame:this.myGame, myRaq1:this.myRaq1, myRaq2:this.myRaq2})
@@ -307,7 +314,7 @@ export class GameService {
         }
         else if (data.gameId === -1)
         {
-            tmpGame = await this.insertGame(data.canvasX, data.type, true);
+            tmpGame = await this.insertGame(data.canvasX, data.type, true, data.invitationId);
             client.emit('invitation', {userID: data.invitationId, gameID:tmpGame.id, userInviteID:data.userId});
         }
         else
@@ -319,8 +326,8 @@ export class GameService {
                 if (tmpGame != null)
                     raqCheck = await this.TakeRaquetteById(tmpGame.raq1);
             }	
-            if (tmpGame === null /* || raqCheck.user_id === data.userId*/)
-                tmpGame = await this.insertGame(data.canvasX, data.type, false);
+            if (tmpGame === null  || raqCheck.user_id === data.userId)
+                tmpGame = await this.insertGame(data.canvasX, data.type, false,-1);
         }
         if (tmpGame.raq1 === -1)
         {
@@ -383,6 +390,29 @@ export class GameService {
         let res = await this.insertHistorique(data);
         await this.delateGame(this.myGame);
         client.emit('messageEnd',res);
+    }
+
+    async CleanGame(client, data)
+    {
+        let date = new Date();
+        let games = await this.TakeGame();
+        games.forEach(async (game) => {
+            if (date.valueOf() - game.timeStart.valueOf() > 4000000)
+               await this.delateGame(game);
+            if (game.winner != -1)
+               await this.delateGame(game);
+            if (game.private === true && date.valueOf() - game.timeStart.valueOf() > 600000)
+            {
+                client.emit('invitation', {userID:game.invite, gameID:-1, userInviteID:-1});
+                await this.delateGame(game);
+            }
+            if (game.raq2 === -1 && date.valueOf() - game.timeStart.valueOf() > 600000)
+            {
+                await this.delateGame(game);
+            }
+            if (game.raq1 === -1 && game.raq2 === -1)
+               await this.delateGame(game);
+        })
     }
 }
 

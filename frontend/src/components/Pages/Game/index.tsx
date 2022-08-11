@@ -6,7 +6,7 @@
 /*   By: mbonnet <mbonnet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 15:50:20 by mbonnet           #+#    #+#             */
-/*   Updated: 2022/08/11 10:05:03 by mbonnet          ###   ########.fr       */
+/*   Updated: 2022/08/11 11:38:52 by mbonnet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -409,11 +409,6 @@ export const Pong = () => {
 	{
 		return (io('http://localhost:3000'));
 	}
-
-	async function takeUser(){
-		return (await axios.get('user/getUserId'));
-	}
-
 	
 	async function run(){
 		await axios.get('game');

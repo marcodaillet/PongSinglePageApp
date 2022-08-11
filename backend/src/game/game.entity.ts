@@ -72,4 +72,8 @@ export class Games {
     winner: number;
 	@Column({ nullable: true })
     private: boolean;
+    @Column({ nullable: true })
+    invite: number;
+    @Column({ nullable: true })
+    timeStart: Date;
 }

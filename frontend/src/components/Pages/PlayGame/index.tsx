@@ -37,7 +37,6 @@ export const Game = () =>
         const getId = async () => {
             const {data} = await axios.get('user/getUserId');
             setUserId(data.userId)
-            console.log(userId);
         }
         getId();
         return () => {bool = false}
@@ -46,7 +45,7 @@ export const Game = () =>
     const navigate = useNavigate();
     const easyWaiting = async () => {
         //const data = await axios.get('game');
-        return navigate("/game/playing", {state: { userId: userId, type: 1, gameId: -2, invitationId: -1, canvasX: 800 }});
+        return navigate("/game/playing", {state: { userId: userId, type: 1, gameId: -1, invitationId: 74686, canvasX: 800 }});
     }
     const normalWaiting = () => {
         return navigate("/game/playing", {state: { userId: userId, type: 2, gameId: -2, invitationId: -1, canvasX: 800 }});
