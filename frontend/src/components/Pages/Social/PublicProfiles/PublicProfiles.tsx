@@ -22,8 +22,7 @@ export const PublicProfiles = () => {
     useEffect(() => {
         let bool = false;
         const getUsers = async () => {
-            const {data} = await axios.get('user');
-            console.log(data);
+            const {data} = await axios.get('user/all');
             setUsers(data);
         }
         getUsers();

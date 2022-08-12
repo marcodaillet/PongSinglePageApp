@@ -9,7 +9,7 @@ export class Chat {
     @Column({ nullable: true })
     name : string;
     @Column({ nullable: true })
-    isSecrete:boolean;
+    isSecret:boolean;
     @Column({ nullable: true })
     isDirectConv:boolean;
     @Column({ nullable: true })

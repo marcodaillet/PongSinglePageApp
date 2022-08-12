@@ -40,7 +40,6 @@ export class AuthService {
     }
 
     async newUser(@Body() data: RegisterModel, clientID: number) {
-        console.log(data, clientID);
         data.avatar = 'http://localhost:3000/api/media/DefaultAvatar.png';
         data.id = clientID;
         data.twofa = false;
@@ -49,8 +48,6 @@ export class AuthService {
         data.twoFactorSecret = '';
         data.privateGame = -1;
         data.privatePartner = -1;
-        console.log(data, clientID);
-
         await this.userService.create(data);
     }
 

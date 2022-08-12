@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  # postgres:
+  #   image: postgres:13.3
+  #   ports:
+  #     - "35500:5432"
+  #   environment:
+  #     POSTGRES_DB: "postgres"
+  #     POSTGRES_USER: "postgres"
+  #     POSTGRES_PASSWORD: "postgres"
+
+  trans_backend:
+    build:
+      dockerfile: ./backend
+    expose:
+      - "3000"
+
+    volumes:
+      - ./backend:/usr/src/transcendence
+    ports:
+      - "3000:3000"
+
+    command: npm run start:dev
+
+  trans_frontend:
+    build:
+      dockerfile: ./frontend
+    expose:
+      - "3001"
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./frontend/src:/usr/src/transcendence/src
+      - ./frontend/public:/usr/src/transcendence/public
+    links:
+      - trans_backend
+    command: npm run start

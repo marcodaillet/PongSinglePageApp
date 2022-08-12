@@ -42,13 +42,10 @@ export class UserService {
     async sendGameInvite(userID: number, gameID: number): Promise<any> {
         return this.userRepository.update(userID, { privateGame: gameID })
     }
+    
     async sendGameInvite2(userID: number, userInviteID: number): Promise<any> {
         return this.userRepository.update(userID, { privatePartner: userInviteID })
     }
-
-    // async acceptGameInvite(clientID: number): Promise<any> {
-    //     return this.userRepository.update(clientID, { pendingInvite: false })
-    // }
 
     async setOnline(clientID: number): Promise<any> {
         return this.userRepository.update(clientID, { status: 'ONLINE' })

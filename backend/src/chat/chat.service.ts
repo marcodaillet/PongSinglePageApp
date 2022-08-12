@@ -1,7 +1,7 @@
 import { Injectable, Req } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm'
-import { Chat, ChatAdmin, ChatUser } from './Chat.entity';
+import { Chat, ChatAdmin, ChatUser } from './chat.entity';
 
 
 @Injectable()
@@ -49,6 +49,7 @@ export class ChatService {
         let res = await this.ChatUserRepository.findOneBy({
             userId:id
         });
+        console.log(res);
         return (res);
     }
 
@@ -86,11 +87,11 @@ export class ChatService {
         return (res);
     }
 
-    async mouvIsSecreteChatById(id:number, isSecrete:boolean){
+    async mouvIsSecretChatById(id:number, isSecret:boolean){
         let res = await this.ChatRepository.findOneBy({
             id: id
         });
-        res.isSecrete = isSecrete;
+        res.isSecret = isSecret;
         await this.ChatRepository.save(res);
         return (res);
     }
@@ -121,10 +122,10 @@ export class ChatService {
     //@@@@@@@@@@@ deb insert @@@@@@@@@@@@@@@@@@@@
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-    async insertChat(name, isSecrete, isDirectConv, password){
+    async insertChat(name, isSecret, isDirectConv, password){
         let res = new Chat();
         res.name = name;
-        res.isSecrete = isSecrete;
+        res.isSecret = isSecret;
         res.isDirectConv = isDirectConv;
         res.password = password;
         await this.ChatRepository.save(res);

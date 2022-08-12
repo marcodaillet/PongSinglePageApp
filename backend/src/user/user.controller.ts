@@ -96,7 +96,6 @@ export class UserController {
     @UseGuards(verifyUser)
     @Post("sendGameInvite")
     async sendGameInvite(@Body() body) {
-        console.log(body);
         const data = JSON.parse(JSON.stringify(body));
         const userID = data.userID;
         const gameID = data.gameID;
@@ -106,7 +105,6 @@ export class UserController {
     @UseGuards(verifyUser)
     @Post("sendUserInvite")
     async sendUserInvite(@Body() body) {
-        console.log(body);
         const data = JSON.parse(JSON.stringify(body));
         const userID = data.userID;
         const userInviteID = data.userInviteID;

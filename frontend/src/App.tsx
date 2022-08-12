@@ -22,7 +22,10 @@ import EnableTwoFactor from './components/Pages/User/Settings/EnableTwoFa';
 import DisableTwoFactor from './components/Pages/User/Settings/DisableTwoFactor';
 import TwoFactor from './components/Pages/User/Settings/TwoFactor';
 import { Waiting } from './components/Pages/Game/Waiting';
-
+import { Chat } from './components/Pages/Social/Chat/Chat';
+import { CreateConv } from './components/Pages/Social/Chat/CreateConv/CreateConv';
+import { CreateDirectConv } from './components/Pages/Social/Chat/CreateConv/CreateDirectConv';
+import { CreateGroupConv } from './components/Pages/Social/Chat/CreateConv/CreateGroupConv';
 
 function App() {
   const [mode, setMode] = useState(false); // Create a variable so we can define the mode on being either light or dark
@@ -50,7 +53,10 @@ function App() {
             <Route path="/game/waiting" element={<Layout children={<Waiting/>} /> } />
             <Route path="/game/playing" element={<PongLayout children={<Pong/>} /> } />
             <Route path="/game/spectate" element={<Layout children={<Home/>} /> } />  
-            <Route path="/social/chat" element={<Layout children={<Home/>} /> } />
+            <Route path="/social/chat" element={<Layout children={<Chat/>} /> } />
+            <Route path="/social/chat/createConv" element={<Layout children={<CreateConv/>} /> } />
+            <Route path="/social/chat/createDirectConv" element={<Layout children={<CreateDirectConv/>} /> } />
+            <Route path="/social/chat/createGroupConv" element={<Layout children={<CreateGroupConv/>} /> } />
             <Route path="/social/publicprofiles" element={<Layout children={<PublicProfiles/>} /> } />
             <Route path="/social/publicprofile" element={<Layout children={<PublicProfile/>} /> } />
             <Route path="/user/profile" element={<Layout children={<Profile/>} /> } />
