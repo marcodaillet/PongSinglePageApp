@@ -1,24 +1,29 @@
 import { Col, Divider, Row } from "antd";
 import "antd/dist/antd.min.css";
-import styles from "./chatFeed.css"
+import "./chatFeed.css"
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ExitToApp } from '@mui/icons-material';
 import { ChannelMessages } from "./ChatMessages";
 import { Button } from "@mui/material";
+import { io } from "socket.io-client";
 
 type LeaveChanProps = {
     userId: number;
     currentChannelId: number;
+    setCurrentChannelId: Function;
 }
 
 const LeaveChan = (props: LeaveChanProps) => {
     function LeaveChan() {
         const removeUser = async() => {
             try {
-                await axios.post('chat/deleteUser', {userId: props.userId});
+                await axios.post('chat/deleteUser', {userId: props.userId, chanId: props.currentChannelId});
+                props.setCurrentChannelId(0);
                 window.location.reload();
+                // let websock = io(`http://localhost:8000`);
+                // websock.emit("message", {chanId: props.currentChannelId, senderId: props.userId, content: `${props.userId} has left the channel`, timestamp: new Date()});
             }
             catch (error) {
                 console.log("Couldn't remove user from the channel");
@@ -98,7 +103,7 @@ const ChanHeader = (props: ChanHeaderProps) => {
             <Row>
                 <Col style={{padding: "15px"}}>
                     <div>
-                        {props.currentChannelId ? ( <LeaveChan userId={props.userId} currentChannelId={props.currentChannelId} /> ) : null }
+                        {props.currentChannelId ? ( <LeaveChan userId={props.userId} currentChannelId={props.currentChannelId} setCurrentChannelId={props.setCurrentChannelId} /> ) : null }
                     </div>
                 </Col>
                 <Col  style={{padding: "15px"}}>
@@ -179,7 +184,7 @@ export const ChatFeed = (props: ChatFeedProps) => {
     }, [props.currentChannelId])
 
     return (
-        <div className="chatFeed">
+        <div style={{width: "90%", height: "100%"}}>
             {isPrivate && !passwordSuccess ? (
                 <PrivateGuard currentChannelId={props.currentChannelId} passwordSuccess={passwordSuccess} setPasswordSuccess={setPasswordSuccess} />
             ) : (

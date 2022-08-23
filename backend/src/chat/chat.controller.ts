@@ -80,4 +80,10 @@ export class ChatController {
         return (ret);
     }
 
+    @UseGuards(verifyUser)
+    @Post('deleteUser')
+    async deleteUser(@Body() body) {
+        let ret = await this.chatService.deleteUserFromChat(body.chanId, body.userId);
+        return (ret);
+    }
 }

@@ -1,3 +1,21 @@
 .chatFeed {
-    width: "1200px";
+    height: 90%;
+    width: 150vh;
+    contain: content;
+    padding-left: 30px;
+}
+
+.chatMessages {
+    height: 63vh; /*limit the height to 80% of the page*/
+    overflow-y: auto; /*messages don't fit? add scrollbars*/  
+}
+
+.input {
+    width: 100%;
+}
+
+.inputBar {
+    display: flex;
+    width: 100%;
+    align-items: center;
 }

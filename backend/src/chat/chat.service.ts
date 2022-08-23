@@ -184,6 +184,12 @@ export class ChatService {
         await this.ChatUserRepository.remove(res);
     }
 
+    async deleteUserFromChat(chanId: number, userId: number) {
+        let res = await this.ChatUserRepository.findOne({where: {chatId: chanId, userId: userId}});
+        if (res)
+            await this.ChatUserRepository.remove(res);
+    }
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //@@@@@@@@@@@ fin delerte @@@@@@@@@@@@@@@@@@@
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

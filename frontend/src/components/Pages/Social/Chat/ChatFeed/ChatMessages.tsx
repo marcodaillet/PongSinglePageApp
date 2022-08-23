@@ -12,6 +12,7 @@ import { Button } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import SendIcon from '@mui/icons-material/Send';
 import { io } from "socket.io-client";
+import "./chatFeed.css"
 
 type UserBubleProps = {
     userId: number;
@@ -66,7 +67,6 @@ export const UserBuble = (props: UserBubleProps) => {
         try {
             await axios.post('user/blockUser', {userId: props.userId, blockeeId: props.senderId});
             alert("You successfully blocked this user");
-            // window.location.reload();
         }
         catch (error) {
             console.log("Error occurred while blocking user");
@@ -252,19 +252,22 @@ export const ChannelMessages = (props: ChannelMessagesProps) => {
     }
 
     return (
-        <div>
-            {oldMessages.filter((msg: WebSocketMessageType) => {
-                return (msg.chanId === props.currentChannelId)}).map((msg: DatabaseMessageType) => (
-                <ChatMessage key={msg.id} msg={msg} oneShownPopup={oneShownPopup} setOneShownPopup={setOneShownPopup} userId={props.userId}></ChatMessage>
-            ))}
-            {newMessages.filter((msg: WebSocketMessageType) => {
-                return (msg.chanId === props.currentChannelId)}).map((msg: WebSocketMessageType) => (
-                <ChatMessage key={msg.timestamp} msg={msg} oneShownPopup={oneShownPopup} setOneShownPopup={setOneShownPopup} userId={props.userId}></ChatMessage>
-            ))}
-            <div>
-                <input required value={content} type="text" placeholder="Write your message here" onChange={(e) => setContent(e.target.value)}/>
+        <div className="chatFeed">
+            <div className="chatMessages">
+                {oldMessages.filter((msg: WebSocketMessageType) => {
+                    return (msg.chanId === props.currentChannelId)}).map((msg: DatabaseMessageType) => (
+                    <ChatMessage key={msg.id} msg={msg} oneShownPopup={oneShownPopup} setOneShownPopup={setOneShownPopup} userId={props.userId}></ChatMessage>
+                ))}
+                {newMessages.filter((msg: WebSocketMessageType) => {
+                    return (msg.chanId === props.currentChannelId)}).map((msg: WebSocketMessageType) => (
+                    <ChatMessage key={msg.timestamp} msg={msg} oneShownPopup={oneShownPopup} setOneShownPopup={setOneShownPopup} userId={props.userId}></ChatMessage>
+                ))}
+            </div>
+            <div className="inputBar">
+                <input className="input" required value={content} type="text" placeholder="Write your message here" onChange={(e) => setContent(e.target.value)}/>
                 <Button startIcon={<SendIcon/>} onClick={submit}></Button>
             </div> 
+
         </div>
     )
 }  

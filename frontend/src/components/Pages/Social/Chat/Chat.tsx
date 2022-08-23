@@ -40,14 +40,14 @@ export const Chat = () => {
     return (
         <div>
             <UserBar Avatar={avatar} UserName={userName}></UserBar>
-               <Row>
-                    <Col span={20}>
-                        <ChatFeed userId={userId} currentChannelId={currentChannelId} setCurrentChannelId={setCurrentChannelId} />
-                    </Col>
-                    <Col span={4}>
-                        <SideBar userName={userName} userId={userId} currentChannelId={currentChannelId} setCurrentChannelId={setCurrentChannelId} />
-                    </Col>
-                </Row>
+            <Row>
+                <Col span={20}>
+                    <ChatFeed userId={userId} currentChannelId={currentChannelId} setCurrentChannelId={setCurrentChannelId} />
+                </Col>
+                <Col span={4}>
+                    <SideBar userName={userName} userId={userId} currentChannelId={currentChannelId} setCurrentChannelId={setCurrentChannelId} />
+                </Col>
+            </Row>
         </div>
     )
 }

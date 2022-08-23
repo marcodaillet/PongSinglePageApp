@@ -35,7 +35,7 @@ const SideBarChannels = (props: SideBarChannelsProps) => {
 
     return (
         <div>
-            <Divider orientation={"left"} style={{ color: "#6281ca"}}>
+            <Divider orientation={"center"} style={{ color: "#6281ca"}}>
                 Group Messages
             </Divider>
             <Col>
@@ -79,7 +79,7 @@ const RenderDirectConvs = (props: RenderDirectConvsProps) => {
     }, [props.directConv.id, props.userName])
 
     return (
-        <Button variant="outlined" size="small" onClick={() => props.setCurrentChannelId(props.directConv.id)}>{name}</Button>
+        <Button variant="outlined" size="small" onClick={() => props.setCurrentChannelId(props.directConv.id)}>{name.length !== 0 ? name : props.userName}</Button>
     )
 }
 
@@ -112,7 +112,7 @@ const SideBarDirectConvs = (props: SideBarDirectConvsProps) => {
 
     return (
         <div>
-            <Divider orientation="left" style={{ color: "#6281ca"}}>
+            <Divider orientation="center" style={{ color: "#6281ca"}}>
                 Direct Messages
             </Divider>
             <Col>

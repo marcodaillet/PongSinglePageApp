@@ -55,18 +55,18 @@ export const Layout = (props: LayoutProps) => {
     }, [unauth, nav]);
 
     return (
-        <LayoutWrapper>
-            <ContentWrapper>
+        <LayoutWrapper style={{width: "100%", height: "100%"}}>
+            <ContentWrapper style={{width: "100%", height: "100%"}}>
                 <Box component="header">
                     <Header toggleMenu={toggleMenu} />
                 </Box>
                 <NavMenu open={isOpen} toggleMenu={toggleMenu}></NavMenu>
-                <Box component="main" sx = {{ flexGrow: 1, p: 3 }}>
-                    <DrawerHeader />
+                <Box component="main" sx = {{ flexGrow: 1, p: 3 }} style={{width: "100%", height: "100%"}}>
+                    <DrawerHeader/>
                     {props.children}
                 </Box>
             </ContentWrapper>
-            <Box component="footer">
+            <Box component="footer" style={{width: "100%", height: "5%"}}>
                     <Footer />
             </Box>
         </LayoutWrapper>
