@@ -2,7 +2,7 @@ import axios from "axios";
 import { SyntheticEvent, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import User from "../../../../../datamodels/user"
-import { Typography, useRadioGroup } from "@mui/material";
+import { Typography } from "@mui/material";
 import Multiselect from "multiselect-react-dropdown";
 
 export const CreateDirectConv = () => {
@@ -52,7 +52,7 @@ export const CreateDirectConv = () => {
         event.preventDefault();
         if (success) {
             try {
-                await axios.post('chat/newChan', {name: "DirectConv", isPrivate: false, isDirectConv: true, adminId: userId, users: chanUsers, password: ""}); 
+                await axios.post('chat/newChan', {name: "Direct Conversation", isPrivate: false, isDirectConv: true, adminId: userId, users: chanUsers, password: ""}); 
                 setRedirection(true);
             }
             catch (error) {

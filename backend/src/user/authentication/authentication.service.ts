@@ -9,7 +9,7 @@ import { RegisterModel, UpdateModel } from "./models/models";
 const QRCode = require('qrcode');
 
 @Injectable()
-export class AuthService {
+export class AuthenticationService {
     constructor(
         private jwtService: JwtService,
         private userService: UserService,

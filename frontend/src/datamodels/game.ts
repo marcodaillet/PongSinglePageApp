@@ -1,24 +1,14 @@
 import { StringifyOptions } from "querystring";
 
-export interface GameInterface {
-    firstPlayerName: string;
-    firstPlayerId: number;
-    secondPlayerName: string;
-    secondPlayerId: number;
-    gameId: number;
-    gameUrl: string;
-};
-
 export interface GameData {
-    gameId: number;
-    gameUrl: string;
-    firstPlayerName: string;
-    firstPlayerId: number;
-    firstPlayerScore: number;
-    secondPlayerName: string;
-    secondPlayerId: number;
-    secondPlayerScore: number;
-    winner: number;
-    loser: number;
-    currentlyGoingOn: boolean;
+    id: number
+    coter_winner: number;
+    winner_id: number;
+    winner_name?: string;
+    looser_id: number;
+    looser_name?: string;
+    winner_point: number;
+    looser_point: number;
+    dificult: number;  
 }
+

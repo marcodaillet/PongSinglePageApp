@@ -4,14 +4,14 @@ import { AuthGuard } from "@nestjs/passport";
 import { Response, Request} from "express";
 import { UserService } from "../user.service";
 import { verifyUser } from "./intra-auth";
-import { AuthService } from "./authentication.service";
+import { AuthenticationService } from "./authentication.service";
 import { RegisterModel } from "./models/models";
 
 @Controller()
 export class AuthController {
     constructor(
         
-        private authService: AuthService,
+        private authenticationService: AuthenticationService,
         private userService: UserService,
         private jwtService: JwtService
     ) {}
@@ -38,16 +38,16 @@ export class AuthController {
     @UseGuards(verifyUser)
     @Get('2fa/generate')
     async activate2fa(@Req() request: Request) {
-        const clientID = await this.authService.clientID(request);
-        const url = await this.authService.generateTwoFactorAuthSecret(clientID);
-        return this.authService.createQRImage(url);
+        const clientID = await this.authenticationService.clientID(request);
+        const url = await this.authenticationService.generateTwoFactorAuthSecret(clientID);
+        return this.authenticationService.createQRImage(url);
     }
 
     @UseGuards(verifyUser)
     @Post('2fa/verify')
     async verify2fa(@Req() request: Request, @Body() data) {
-        const clientID = await this.authService.clientID(request);
-        const validation = await this.authService.verifyTwoFactorSecret(data.code, clientID);
+        const clientID = await this.authenticationService.clientID(request);
+        const validation = await this.authenticationService.verifyTwoFactorSecret(data.code, clientID);
         if (!validation)
             throw new UnauthorizedException('Wrong authentication code');
         else
@@ -58,8 +58,8 @@ export class AuthController {
     @UseGuards(verifyUser)
     @Post('2fa/login')
     async login2fa(@Req() request: Request, @Body() data) {
-        const client = await this.authService.clientID(request);
-        const validation = await this.authService.verifyTwoFactorSecret(data.code, client);
+        const client = await this.authenticationService.clientID(request);
+        const validation = await this.authenticationService.verifyTwoFactorSecret(data.code, client);
         if (!validation)
             throw new UnauthorizedException('Wrong authentication code');
     }
@@ -67,7 +67,7 @@ export class AuthController {
     @UseGuards(verifyUser)
     @Post('2fa/disable')
     async disable2fa(@Req() request: Request, @Body() data) {
-        const clientID = await this.authService.clientID(request);
+        const clientID = await this.authenticationService.clientID(request);
         await this.userService.disableTwoFactor(clientID);
         return (true);
     }
@@ -75,14 +75,14 @@ export class AuthController {
     @UseGuards(verifyUser)
     @Post('register')
     async register(@Body() data: RegisterModel, @Req() request: Request) {
-        const clientID = await this.authService.clientID(request);
-        await this.authService.newUser(data, clientID);
+        const clientID = await this.authenticationService.clientID(request);
+        await this.authenticationService.newUser(data, clientID);
     }
 
     @UseGuards(verifyUser)
     @Get('userData')
     async getUserData(@Req() request: Request, @Body() data) {
-        const clientID = await this.authService.clientID(request);
+        const clientID = await this.authenticationService.clientID(request);
         return await this.userService.findOne(clientID);
     }
 
@@ -90,7 +90,7 @@ export class AuthController {
     @Post('logout')
     async logout(@Req() request: Request, @Res({passthrough: true}) response: Response) {
         response.clearCookie('clientID');
-        const clientID = await this.authService.clientID(request);
+        const clientID = await this.authenticationService.clientID(request);
         await this.userService.setOffline(clientID);
         return {message: 'Success'};
     }
@@ -98,7 +98,7 @@ export class AuthController {
     @UseGuards(verifyUser)
     @Post('setOnline')
     async setOnline(@Req() request: Request) {
-        const clientID = await this.authService.clientID(request);
+        const clientID = await this.authenticationService.clientID(request);
         await this.userService.setOnline(clientID);
     }
 }

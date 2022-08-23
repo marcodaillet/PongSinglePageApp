@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Param, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { diskStorage } from 'multer';
+import { GameService } from './game.service';
 
 export const storage = { 
     storage: diskStorage({
@@ -12,8 +13,15 @@ export const storage = {
 
 @Controller('game')
 export class GameController {
-    constructor() {}
+    constructor(
+        private readonly gameService: GameService,
+    ) {}
     @Get()
     async all(){
     }
-}   
+
+    @Get('getGameHistoric')
+    async getGameHistoric() {
+        return await this.gameService.getGameHistoric();
+    }
+}

@@ -1,8 +1,7 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HeroContainer } from "../../PlayGame";
-import React from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import "../style/style.css"
 import axios from "axios";
 
@@ -24,17 +23,16 @@ export const Register = () => {
             setRedirect(true);
         }
         catch (error){
-            console.log("ERRPRPRPRPRPRPPRPR")
+            console.log("Error while submiting")
             setInvalid(true);
         }
     }
 
     useEffect(() => {
-        console.log(redirect, invalid)
         if (redirect && !invalid){
             return navigate("/home");
         }
-    },[redirect]);
+    },[redirect, invalid, navigate]);
 
     return (
         <HeroContainer>

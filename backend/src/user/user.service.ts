@@ -14,7 +14,7 @@ export class UserService {
         return this.userRepository.find();
     }
 
-    async findOne(id: any): Promise<User> {
+    async findOne(id: number): Promise<User> {
         const user = this.userRepository.findOne({where: {id: id}});
         return user;
     }
@@ -68,8 +68,55 @@ export class UserService {
         return friends;
     }
 
+    async allBlocked(): Promise<User[]> {
+        const blocked = await this.userRepository.find({relations:["blocked"]});
+        return blocked;
+    }
+
     async userFriends(id: number): Promise<User> {
         return await this.userRepository.findOne({where: { id }, relations: ["friends"]});
+    }
+
+    async userBlocked(id: number): Promise<User> {
+        return await this.userRepository.findOne({where: { id }, relations: ["blocked"]});
+    }
+
+    async blockUser(userId: number, blockeeId: number): Promise<User[]> {
+        const blocker = await this.userRepository.findOneBy({id: userId});
+        const blockee = await this.userRepository.findOneBy({id: blockeeId});
+        const allUsers = await this.allBlocked();
+        if (userId === blockeeId) {
+            return [];
+        }
+        else {
+            for (const user of allUsers) {
+                if (user.id === blocker.id) {
+                    const ifFriend = user.blocked.filter((friend) => friend.id === blockee.id);
+                    if (!ifFriend.length || !user.blocked.length)
+                    {
+                        user.blocked.push(blockee);
+                    }
+                }
+            }
+            return this.userRepository.save(allUsers);
+        }
+    }
+
+    async unBlockUser(userID: number, friendID: number): Promise<User[]> {
+        const userToDel = await this.userRepository.findOneBy({id: userID});
+        const friendToDel = await this.userRepository.findOneBy({id: friendID});
+        const allUsers = await this.allBlocked();
+        if (userID === friendID) {
+            return [];
+        }
+        else {
+            for (const user of allUsers) {
+                if (user.id === userToDel.id) {
+                    user.blocked = user.blocked.filter((friend: User) => friend.id !== friendToDel.id);
+                }
+            }
+            return this.userRepository.save(allUsers);
+        }
     }
 
     async addFriend(userID: number, friendID: number): Promise<User[]> {
@@ -94,8 +141,8 @@ export class UserService {
     }
 
     async deleteFriend(userID: number, friendID: number): Promise<User[]> {
-        const friendToDel = await this.userRepository.findOneBy({id: friendID});
         const userToDel = await this.userRepository.findOneBy({id: userID});
+        const friendToDel = await this.userRepository.findOneBy({id: friendID});
         const allUsers = await this.allFriends();
         if (userID === friendID) {
             return [];

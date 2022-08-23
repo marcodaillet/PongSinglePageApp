@@ -1,77 +1,87 @@
 import { Injectable, Req } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm'
-import { Chat, ChatAdmin, ChatUser } from './chat.entity';
+import { Chat, ChatUser } from './chat.entity';
 
 
 @Injectable()
 export class ChatService {
     constructor(
         @InjectRepository(Chat) private readonly ChatRepository: Repository<Chat>,
-        @InjectRepository(ChatAdmin) private readonly ChatAdminRepository: Repository<ChatAdmin>,
         @InjectRepository(ChatUser) private readonly ChatUserRepository: Repository<ChatUser>,
        
        ) {}
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    //@@@@@@@@@@@ deb take @@@@@@@@@@@@@@@@@@@@@@
+    //@@@@@@@@@@@ deb get @@@@@@@@@@@@@@@@@@@@@@
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     
-    async takeChat(){
+    async getChat(){
         let res = await this.ChatRepository.find();
         return (res);
     }
-    async takeChatById(id:number){
+    async getChatById(id:number){
         let res = await this.ChatRepository.findOneBy({
             id:id
         });
         return (res);
     }
 
-    async takeChatByuserId(id:number){
+    async getChatByuserId(id:number){
         let res = await this.ChatRepository.findOneBy({
             id:id
         });
         return (res);
     }
 
-    async takeChatUser(){
+    async getChatUser(){
         let res = await this.ChatUserRepository.find();
         return (res);
     }
-    async takeChatUserByChatId(id:number){
-        let res = await this.ChatUserRepository.findBy({
-            chatId:id
-        });
+    async getChatUserByChatId(id:number){
+        let res = await this.ChatUserRepository.find();
+        let ret: number[] = [];
+        res.map((chat: ChatUser) => {
+            if (chat.chatId === id)
+                ret.push(chat.userId);
+        })
+        return (ret);
+    }
+
+    async getChatUserByUserId(id:number){
+        let res = await this.ChatUserRepository.find();
+        let ret: number[] = [];
+        res.map((chat: ChatUser) => {
+            if (chat.userId === id)
+                ret.push(chat.chatId);
+        })
+        return (ret);
+    }
+
+    async getChatAdminByChatId(id:number){
+        let res = await this.ChatUserRepository.findOne({where: { chatId: id, userType: 0}});
         return (res);
     }
 
-    async takeChatUserByUserId(id:number){
-        let res = await this.ChatUserRepository.findOneBy({
-            userId:id
-        });
-        console.log(res);
+    async getChatAdminByAdminId(id:number){
+        let res = await this.ChatUserRepository.findOne({where: { userId: id, userType: 0} });
         return (res);
     }
 
-    async takeChatAdmin(){
-        let res = await this.ChatAdminRepository.find();
-        return (res);
-    }
-    async takeChatAdminByChatId(id:number){
-        let res = await this.ChatAdminRepository.findOneBy({
-            chatId:id
-        });
-        return (res);
+    async isAdmin(chanId: number, userId: number) {
+        let res = await this.ChatUserRepository.findOne({where: {userId: userId, chatId: chanId}});
+        if (res)
+            return (true);
+        else
+            return (false);
     }
 
-    async takeChatAdminByAdminId(id:number){
-        let res = await this.ChatAdminRepository.findOneBy({
-            adminId:id
-        });
-        return (res);
+    async getUserType(chanId: number, userId: number) {
+        let res = await this.ChatUserRepository.findOne({where: {userId: userId, chatId: chanId}});
+        return (res.userType);
     }
+    
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    //@@@@@@@@@@@ fin take @@@@@@@@@@@@@@@@@@@@@@
+    //@@@@@@@@@@@ fin get @@@@@@@@@@@@@@@@@@@@@@@
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -87,11 +97,11 @@ export class ChatService {
         return (res);
     }
 
-    async mouvIsSecretChatById(id:number, isSecret:boolean){
+    async mouvIsPrivateChatById(id:number, isPrivate:boolean){
         let res = await this.ChatRepository.findOneBy({
             id: id
         });
-        res.isSecret = isSecret;
+        res.isPrivate = isPrivate;
         await this.ChatRepository.save(res);
         return (res);
     }
@@ -122,31 +132,23 @@ export class ChatService {
     //@@@@@@@@@@@ deb insert @@@@@@@@@@@@@@@@@@@@
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-    async insertChat(name, isSecret, isDirectConv, password){
+    async insertChat(name, isPrivate, isDirectConv, password){
         let res = new Chat();
         res.name = name;
-        res.isSecret = isSecret;
+        res.isPrivate = isPrivate;
         res.isDirectConv = isDirectConv;
         res.password = password;
         await this.ChatRepository.save(res);
         return (res);
     }
 
-    async insertChatUser(chatId:number, userId:number)
+    async insertChatUser(chatId:number, userId:number, userType:number)
     {
         let chatUser = new ChatUser();
         chatUser.chatId = chatId;
         chatUser.userId = userId;
+        chatUser.userType = userType
         await this.ChatUserRepository.save(chatUser);
-        return (chatUser);
-    }
-
-    async insertChatAdmin(chatId:number, adminId:number)
-    {
-        let chatUser = new ChatAdmin();
-        chatUser.chatId = chatId;
-        chatUser.adminId = adminId;
-        await this.ChatAdminRepository.save(chatUser);
         return (chatUser);
     }
 
@@ -166,13 +168,6 @@ export class ChatService {
         await this.ChatRepository.save(res);
     }
 
-    async deletChatAdminByAdminId(adminId:number)
-    {
-        let res = await this.ChatAdminRepository.findOneBy({
-            adminId: adminId
-        })
-        await this.ChatAdminRepository.remove(res);
-    }
     async deletChatUserByUserId(userId:number)
     {
         let res = await this.ChatUserRepository.findOneBy({

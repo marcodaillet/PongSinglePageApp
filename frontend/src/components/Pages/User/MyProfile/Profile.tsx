@@ -7,57 +7,15 @@ import "../style/style.css"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-var GameDataTmp = [
-    {
-        gameId: 0,
-        gameUrl: 'test',
-        firstPlayerName: 'jeanjacques',
-        firstPlayerId: 0,
-        firstPlayerScore: 100,
-        secondPlayerName: 'michel',
-        secondPlayerId: 1,
-        secondPlayerScore: 0,
-        winner: 0,
-        loser: 1,
-        currentlyGoingOn: false,
-    },
-    {
-        gameId: 1,
-        gameUrl: 'test',
-        firstPlayerName: 'jeanjacques',
-        firstPlayerId: 0,
-        firstPlayerScore: 3,
-        secondPlayerName: 'michel',
-        secondPlayerId: 1,
-        secondPlayerScore: 72,
-        winner: 1,
-        loser: 0,
-        currentlyGoingOn: false,
-    },
-    {
-        gameId: 2,
-        gameUrl: 'test',
-        firstPlayerName: 'jeanjacques',
-        firstPlayerId: 0,
-        firstPlayerScore: 32,
-        secondPlayerName: 'michel',
-        secondPlayerId: 1,
-        secondPlayerScore: 21,
-        winner: 0,
-        loser: 1,
-        currentlyGoingOn: false,
-    },
-]
-
-
 export const Profile = () => {
     const [played, setPlayed] = useState(0);
     const [wins, setWins] = useState(0);
     const [looses, setLooses] = useState(0);
     const [friends, setFriends] = useState([]);
+    const [rank, setRank] = useState('');
     const [user, setUser] = useState({username: '', avatar: '', id: 0, privateGame: -1, privatePartner: -1});
-    const [games, setGames] = useState(GameDataTmp);
-    const navigate = useNavigate()
+    const [games, setGames] = useState<any>([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         let bool = true;
@@ -84,52 +42,45 @@ export const Profile = () => {
     useEffect(() => {
         let bool = true;
         const getGameData = async () => {
-            const data = GameDataTmp; //await getGames();
+            const data = await axios.get('game/getGameHistoric');
             if (bool)
-                setGames(data);
+                setGames(data.data);
         }
         getGameData();
         return () => {bool = false};
-    });
+    }, []);
 
     useEffect(() => {
         let bool = true;
-        let count = 0;
+        let win_count = 0;
+        let lost_count = 0;
 
-        const getGamesWon = async () => {
-            games.filter((game: GameData) => !game.currentlyGoingOn && game.winner === user.id).map((gameData: GameData) => 
-                count++
-            )
-            if (bool)
-                setWins(count);
+        const getGamesStats = async () => {
+            games.forEach((gameData: GameData) => {
+                if (gameData.winner_id === user.id)
+                    win_count++;
+                else if (gameData.looser_id === user.id)
+                    lost_count++;
+            });
+            if (bool) {
+                setWins(win_count);
+                setLooses(lost_count);
+                setPlayed(win_count + lost_count)
+                if (win_count < 1)
+                    setRank("Bronze")
+                else if (win_count < 3)
+                    setRank("Silver")
+                else if (win_count < 5)
+                    setRank("Gold")
+                else if (win_count < 10)
+                    setRank("Platine")
+                else if (win_count < 15)
+                    setRank("Diamond")
+            }
         }
-        getGamesWon();
+        getGamesStats();
         return () => {bool = false;}
     }, [user.id, games]);
-
-    useEffect(() => {
-        let bool = true;
-        let count = 0;
-
-        const getGamesLost = async () => {
-            games.filter((game: GameData) => !game.currentlyGoingOn && game.winner !== user.id).map((gameData: GameData) => 
-                count++
-            )
-            if (bool)
-                setLooses(count);
-        }
-        getGamesLost();
-        return () => {bool = false;}
-    }, [user.id, games]);
-
-    useEffect(() => {
-        let count = 0;
-        const getPlayed = async () => {
-            count = wins + looses;
-            setPlayed(count);
-        }
-        getPlayed();
-    }, [looses, wins]);
 
     const acceptInvite = async (e: SyntheticEvent) => {
         e.preventDefault();
@@ -145,6 +96,17 @@ export const Profile = () => {
         }
         catch (error) {
             console.log("error occurred while deleting this friend");
+        }
+    }
+
+    const spectateFriend = async (e: SyntheticEvent, userId: number, friendId: number) => {
+        e.preventDefault();
+        try {
+            const info = await axios.post("game/spectateFriend", {userID: userId, friendID: friendId})
+            return navigate("/game/playing", {state: { userId: user.id, type: 1, gameId: info.data.gameId, invitationId: -1, canvasX: 800}})
+        }
+        catch (error) {
+            console.log("error occurred while trying to spectate this friend");
         }
     }
 
@@ -184,6 +146,8 @@ export const Profile = () => {
                                     <th>Games lost</th>
                                     <th></th>
                                     <th>Games Played</th>
+                                    <th></th>
+                                    <th>Rank</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -192,7 +156,9 @@ export const Profile = () => {
                                     <td> - </td>
                                     <td>{looses}</td>
                                     <td> - </td>
-                                    <td>{played}</td>   
+                                    <td>{played}</td>  
+                                    <td> - </td>
+                                    <td>{rank}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -215,17 +181,16 @@ export const Profile = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {games.filter((game: GameData) => !game.currentlyGoingOn && (game.firstPlayerId === user.id || game.secondPlayerId === user.id)).map((gameData: GameData) => 
-                                    <tr key={gameData.gameId}>
-                                        <td>#{gameData.gameId}</td>
-                                        <td>{gameData.firstPlayerName}</td>
+                                    {games.filter((game: GameData) => game.winner_id === user.id || game.looser_id === user.id).map((gameData: GameData) => 
+                                    <tr key={gameData.id}>
+                                        <td>#{gameData.id}</td>
+                                        <td>{gameData.winner_id}</td>
                                         <td> VS </td>
-                                        <td>{gameData.secondPlayerName}</td>
-                                        <td>{gameData.firstPlayerScore} points</td>
-                                        <td>{gameData.secondPlayerScore} points</td>
+                                        <td>{gameData.looser_id}</td>
+                                        <td>{gameData.winner_point} points</td>
+                                        <td>{gameData.looser_point} points</td>
                                         {
-                                        gameData.firstPlayerScore >  gameData.secondPlayerScore ? 
-                                        <td>{gameData.firstPlayerName}</td> : <td>{gameData.secondPlayerName}</td>
+                                        <td>{gameData.winner_id}</td>
                                         }
                                     </tr>
                                     )}
@@ -257,6 +222,9 @@ export const Profile = () => {
                                     <td>{friend.username}</td>
                                     <td>{friend.status}</td>
                                     <td><button onClick={(e) => {removeFriend(e, user.id, friend.id)}} type="button" className="buttonRemove">Remove Friend</button></td>
+                                    {
+                                        friend.status == "IN GAME" ? <td><button onClick={(e) => {spectateFriend(e, user.id, friend.id)}} type="button" className="buttonRemove">Spectate Game</button></td> : null
+                                    }
                                 </tr>
                                 )}
                             </tbody>

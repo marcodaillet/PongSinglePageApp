@@ -1,33 +1,74 @@
-import React, { useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { Link, } from "react-router-dom";
 import User from "../../../../datamodels/user";
 import "./style/style.css"
-import DefaultAvatar from "../../../../images/DefaultAvatar.png"
 import axios from "axios";
+import { Button } from "@mui/material";
 
 export const PublicProfiles = () => {
     const [user, setUser] = useState({id: 0,});
     const [users, setUsers] = useState([]);
+    const [blocked, setBlocked] = useState<User[]>([]);
 
     useEffect(() => {
-        let bool = false;
         const getUser = async () => {
             const {data} = await axios.get('userData');
             setUser(data);
         }
         getUser();
-        return () => {bool = false;}
     }, []);
 
     useEffect(() => {
-        let bool = false;
+        let bool = true;
+        const getIsBlocked = async () => {
+            const {data} = await axios.get('user/userBlocked');
+            if (bool)
+                setBlocked(data.blocked);
+        }
+        getIsBlocked();
+        return () => {bool = false};
+    }, [user]);
+
+    useEffect(() => {
         const getUsers = async () => {
             const {data} = await axios.get('user/all');
             setUsers(data);
         }
         getUsers();
-        return () => {bool = false;}
     }, []);
+
+    function isBlocked(id: number) {
+        let ret = false;
+        blocked.forEach((user: User) => {
+            if (user.id === id)
+                ret = true;
+        })
+        return (ret)
+    }
+
+    const blockUser = async (e: SyntheticEvent, id: number) => {
+        e.preventDefault();
+        try {
+            await axios.post('user/blockUser', {userId: user.id, blockeeId: id});
+            // window.location.reload();
+            alert("You successfully blocked this user");
+        }
+        catch (error) {
+            console.log("Error occurred while blocking user");
+        }
+    }
+
+    const unBlockUser = async (e: SyntheticEvent, id: number) => {
+        e.preventDefault();
+        try {
+            await axios.post('user/unBlockUser', {userId: user.id, blockeeId: id});
+            // window.location.reload();
+            alert("You successfully unblocked this user");
+        }
+        catch (error) {
+            console.log("Error occurred while blocking user");
+        }
+    }
 
     return (
         <main className="PublicProfilesComponent">
@@ -42,7 +83,24 @@ export const PublicProfiles = () => {
                                 <td> - </td>
                                 <td>{usersData.username}</td>
                                 <td> - </td>
-                                <td><Link to={"/social/publicprofile"} state={usersData.username} type="button" className="customButton">See profile</Link></td>
+                                <td>{ (usersData.id !== user.id) ?
+                                        <Link to={"/social/publicprofile"} state={usersData.username} type="button" className="customButton">See profile</Link> 
+                                        :
+                                        <Link to={"/user/profile"} type="button" className="customButton">See profile</Link>
+                                    }   
+                                </td>
+                                    {
+                                        (usersData.id !== user.id) ?
+                                        <td>{
+                                                isBlocked(usersData.id) ? 
+                                                <Button onClick={(e) => {unBlockUser(e, usersData.id)}}>Unblock</Button>
+                                                :
+                                                <Button onClick={(e) => {blockUser(e, usersData.id)}}>Block</Button>
+                                            }   
+                                        </td>
+                                        :
+                                        null
+                                    }
                             </tr>
                         )}
                     </tbody>

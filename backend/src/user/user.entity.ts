@@ -26,6 +26,9 @@ export class User {
     @ManyToMany(() => User)
     @JoinTable()
     friends: User[];
+    @ManyToMany(() => User)
+    @JoinTable()
+    blocked: User[];
     @ManyToMany(
         () => Chat
     )

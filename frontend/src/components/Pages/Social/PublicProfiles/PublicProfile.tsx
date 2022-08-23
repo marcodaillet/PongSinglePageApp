@@ -1,57 +1,18 @@
 import { Typography } from "@mui/material";
 import { SyntheticEvent, useEffect, useState} from "react";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { GameData } from "../../../../datamodels/game";
 import axios from "axios";
 
-var GameDataTmp = [
-    {
-        gameId: 0,
-        gameUrl: 'test',
-        firstPlayerName: 'jeanjacques',
-        firstPlayerId: 0,
-        firstPlayerScore: 100,
-        secondPlayerName: 'michel',
-        secondPlayerId: 1,
-        secondPlayerScore: 0,
-        winner: 0,
-        loser: 1,
-        currentlyGoingOn: false,
-    },
-    {
-        gameId: 1,
-        gameUrl: 'test',
-        firstPlayerName: 'jeanjacques',
-        firstPlayerId: 0,
-        firstPlayerScore: 3,
-        secondPlayerName: 'michel',
-        secondPlayerId: 1,
-        secondPlayerScore: 72,
-        winner: 1,
-        loser: 0,
-        currentlyGoingOn: false,
-    },
-    {
-        gameId: 2,
-        gameUrl: 'test',
-        firstPlayerName: 'jeanjacques',
-        firstPlayerId: 0,
-        firstPlayerScore: 32,
-        secondPlayerName: 'michel',
-        secondPlayerId: 1,
-        secondPlayerScore: 21,
-        winner: 0,
-        loser: 1,
-        currentlyGoingOn: false,
-    },
-]
-
-
 export const PublicProfile = (props: any) => {    
     const [user, setUser] = useState({username: "", avatar:"", id: 0});
+    const [played, setPlayed] = useState(0);
+    const [wins, setWins] = useState(0);
+    const [looses, setLooses] = useState(0);
+    const [rank, setRank] = useState('');
     const [publicUser, setPublicUser] = useState({username: "", avatar:"", id: -1});
-    const [games, setGames] = useState(GameDataTmp);
-    const [publicUserName, setPublicUserName] = useState(useLocation().state);
+    const [games, setGames] = useState<any>([]);
+    const publicUserName = useLocation().state;
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -68,25 +29,56 @@ export const PublicProfile = (props: any) => {
     useEffect(() => {
         let bool = true;
         const getPublicUser = async () => {
-            const {data} = await axios.get('user/findUser' + `${publicUserName}`) //await getUserData();
+            const {data} = await axios.get(`user/findUser${publicUserName}`)
             if (bool)
                 setPublicUser(data);
         }
         getPublicUser();
         return () => {bool = false};
-    }, []);
-
+    }, [publicUserName]);
 
     useEffect(() => {
         let bool = true;
         const getGameData = async () => {
-            const data = GameDataTmp;
+            const data = await axios.get('game/getGameHistoric');
             if (bool)
-                setGames(data);
+                setGames(data.data);
         }
         getGameData();
         return () => {bool = false};
-    });
+    }, []);
+
+    useEffect(() => {
+        let bool = true;
+        let win_count = 0;
+        let lost_count = 0;
+
+        const getGamesStats = async () => {
+            games.forEach((gameData: GameData) => {
+                if (gameData.winner_id === publicUser.id)
+                    win_count++;
+                else if (gameData.looser_id === publicUser.id)
+                    lost_count++;
+            });
+            if (bool) {
+                setWins(win_count);
+                setLooses(lost_count);
+                setPlayed(win_count + lost_count)
+                if (win_count < 1)
+                    setRank("Bronze")
+                else if (win_count < 3)
+                    setRank("Silver")
+                else if (win_count < 5)
+                    setRank("Gold")
+                else if (win_count < 10)
+                    setRank("Platine")
+                else if (win_count < 15)
+                    setRank("Diamond")
+            }
+        }
+        getGamesStats();
+        return () => {bool = false;}
+    }, [publicUser.id, games]);
 
     const sendInvite = async (e: SyntheticEvent, id: number) => {
         e.preventDefault();
@@ -96,7 +88,7 @@ export const PublicProfile = (props: any) => {
     const addFriend = async (e: SyntheticEvent, userId: number, friendId: number) => {
         e.preventDefault();
         try {
-            const ret = await axios.post("user/addFriend", {userID: userId, friendID: friendId})
+            await axios.post("user/addFriend", {userID: userId, friendID: friendId})
             alert("You added a new friend");
         }
         catch (error) {
@@ -139,17 +131,21 @@ export const PublicProfile = (props: any) => {
                                     <th>Games lost</th>
                                     <th></th>
                                     <th>Games Played</th>
+                                    <th></th>
+                                    <th>Rank</th>
                                 </tr>
                             </thead>
-                            {/* <tbody>
+                            <tbody>
                                 <tr>
-                                    <td>{publicUser.numberWins}</td>
+                                    <td>{wins}</td>
                                     <td> - </td>
-                                    <td>{publicUser.numberLosses}</td>
+                                    <td>{looses}</td>
                                     <td> - </td>
-                                    <td>{publicUser.numberWins + publicUser.numberLosses}</td>    
+                                    <td>{played}</td>
+                                    <td> - </td>
+                                    <td>{rank}</td>
                                 </tr>
-                            </tbody> */}
+                            </tbody>
                         </table>
                     </div>
                     <div>
@@ -167,12 +163,12 @@ export const PublicProfile = (props: any) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {games.filter((game: GameData) => !game.currentlyGoingOn && (game.firstPlayerId === user.id || game.secondPlayerId === user.id)).map((gameData: GameData) => 
-                                    <tr key={gameData.gameId}>
-                                        <td>#{gameData.gameId}</td>
-                                        <td>{gameData.firstPlayerName} - {gameData.firstPlayerScore}</td>
+                                    {games.filter((game: GameData) => game.winner_id === publicUser.id || game.looser_id === publicUser.id).map((gameData: GameData) => 
+                                    <tr key={gameData.id}>
+                                        <td>#{gameData.id}</td>
+                                        <td>{gameData.winner_id} - {gameData.winner_point}</td>
                                         <td> VS </td>
-                                        <td>{gameData.secondPlayerName} - {gameData.secondPlayerScore}</td>
+                                        <td>{gameData.looser_id} - {gameData.looser_point}</td>
                                     </tr>
                                     )}
                                 </tbody>

@@ -4,14 +4,14 @@ import { JwtService } from "@nestjs/jwt"
 import { PassportStrategy } from "@nestjs/passport"
 import { Strategy } from "passport-oauth2"
 import { stringify } from "querystring"
-import { AuthService } from "./authentication.service"
+import { AuthenticationService } from "./authentication.service"
 
 @Injectable()
 export class IntraStrategy extends PassportStrategy(Strategy, 'intra') {
     constructor (
-        private authService: AuthService,
         private jwtService : JwtService,
-        private http: HttpService
+        private http: HttpService,
+        private authenticationService: AuthenticationService,
     ) {
         super({
             authorizationURL: `https://api.intra.42.fr/oauth/authorize?${ stringify({client_id : process.env.API42_UID, redirect_uri : 'http://localhost:3000/api/authentication/login', scope : 'public', state : process.env.STATE, response_type :'code',}) }`,

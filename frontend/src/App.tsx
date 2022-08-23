@@ -26,6 +26,7 @@ import { Chat } from './components/Pages/Social/Chat/Chat';
 import { CreateConv } from './components/Pages/Social/Chat/CreateConv/CreateConv';
 import { CreateDirectConv } from './components/Pages/Social/Chat/CreateConv/CreateDirectConv';
 import { CreateGroupConv } from './components/Pages/Social/Chat/CreateConv/CreateGroupConv';
+import { AdminPanel } from './components/Pages/Social/Chat/ChatFeed/AdminPanel';
 
 function App() {
   const [mode, setMode] = useState(false); // Create a variable so we can define the mode on being either light or dark
@@ -57,6 +58,7 @@ function App() {
             <Route path="/social/chat/createConv" element={<Layout children={<CreateConv/>} /> } />
             <Route path="/social/chat/createDirectConv" element={<Layout children={<CreateDirectConv/>} /> } />
             <Route path="/social/chat/createGroupConv" element={<Layout children={<CreateGroupConv/>} /> } />
+            <Route path="/social/chat/adminpanel" element={<Layout children={<AdminPanel/>} /> } />
             <Route path="/social/publicprofiles" element={<Layout children={<PublicProfiles/>} /> } />
             <Route path="/social/publicprofile" element={<Layout children={<PublicProfile/>} /> } />
             <Route path="/user/profile" element={<Layout children={<Profile/>} /> } />

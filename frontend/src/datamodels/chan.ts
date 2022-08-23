@@ -9,3 +9,18 @@ export type Chan = {
     users: User[];
     password?: string
 }
+
+export type DatabaseMessageType = {
+    id: number;
+    chanId: number;
+    senderId: number;
+    content: string;
+    timestamp: string;
+}
+
+export type WebSocketMessageType = {
+    chanId: number;
+    senderId: number;
+    content: string;
+    timestamp: string;
+}

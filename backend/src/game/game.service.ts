@@ -414,6 +414,10 @@ export class GameService {
                await this.delateGame(game);
         })
     }
+
+    async getGameHistoric() {
+        return this.HistoriqueRepository.find();
+    }
 }
 
 

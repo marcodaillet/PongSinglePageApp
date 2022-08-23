@@ -10,6 +10,7 @@ export type User = {
     numberLosses: number;
     numberGamesPlayed: number;
     twofa: boolean;
+    userType?: number;
 };
 
 export default User;

@@ -9,7 +9,7 @@ export class Chat {
     @Column({ nullable: true })
     name : string;
     @Column({ nullable: true })
-    isSecret:boolean;
+    isPrivate:boolean;
     @Column({ nullable: true })
     isDirectConv:boolean;
     @Column({ nullable: true })
@@ -24,14 +24,6 @@ export class ChatUser {
     chatId : number;
     @Column({ nullable: true })
     userId:number;
-}
-
-@Entity('chat_admin')
-export class ChatAdmin {
-    @PrimaryGeneratedColumn()
-    id: number;
     @Column({ nullable: true })
-    chatId : number;
-    @Column({ nullable: true })
-    adminId:number;
+    userType: number;
 }

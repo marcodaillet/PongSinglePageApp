@@ -1,9 +1,11 @@
-import { Divider } from "antd";
+import { Col, Divider, Row } from "antd";
 import axios from "axios";
-import { SyntheticEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Chan } from "./../../../../../datamodels/chan"
 import LockIcon from '@mui/icons-material/Lock';
 import { Link } from "react-router-dom";
+import AddIcon from '@mui/icons-material/Add';
+import { Button } from "@mui/material";
 
 type SideBarChannelsProps = {
     setCurrentChannelId: Function;
@@ -13,10 +15,9 @@ const SideBarChannels = (props: SideBarChannelsProps) => {
     const [chans, setChans] = useState<Array<Chan>>([])
     useEffect(() => {
         let bool = true;
-        let userId: number = props.userId;
         const getChans = async () => {
             try {
-                const {data} = await axios.post('chat/getChansByUserId', {userId: userId})
+                const {data} = await axios.post('chat/getChansByUserId', {userId: props.userId})
                 if (data) {
                     let res: Chan[];
                     res = data.filter((channel: any) => !channel.isDirectConv);
@@ -37,12 +38,13 @@ const SideBarChannels = (props: SideBarChannelsProps) => {
             <Divider orientation={"left"} style={{ color: "#6281ca"}}>
                 Group Messages
             </Divider>
+            <Col>
             {chans.map((chan: Chan) => (
-                <ul key={chan.id} onClick={() =>  props.setCurrentChannelId(chan.id)}>
-                    <p>{chan.name}</p>
-                    <p>{chan.isPrivate ? <LockIcon></LockIcon> : <div></div>}</p>
-                </ul>
+                <Row key={chan.id} style={{marginLeft: "25px", padding: "5px"}}>
+                    <Button variant="outlined" size="small" onClick={() => props.setCurrentChannelId(chan.id)} endIcon={(chan.isPrivate ? <LockIcon></LockIcon> : null)}>{chan.name}</Button>
+                </Row>
             ))}
+            </Col>
         </div>
     )
 }
@@ -54,7 +56,6 @@ type RenderDirectConvsProps = {
 }
 const RenderDirectConvs = (props: RenderDirectConvsProps) => {
     const [name, setName] = useState('');
-    const [users, setUsers] = useState<any>([]);
     
     useEffect(() => {
         let bool = true;
@@ -62,8 +63,12 @@ const RenderDirectConvs = (props: RenderDirectConvsProps) => {
             let chanId = props.directConv.id;
             try {
                 const {data} = await axios.post('chat/getChanUsers', {chanId: chanId});
-                if (bool)
-                    setUsers(data);
+                if (data.length === 2) {
+                    data.forEach((u: any) => {
+                        if (u.username !== props.userName && bool)
+                            setName(u.username);
+                    });                
+                }
             }
             catch (error) {
                 console.log("Couldn't fetch users for this direct conversation");
@@ -71,31 +76,10 @@ const RenderDirectConvs = (props: RenderDirectConvsProps) => {
         }
         getUsers();
         return () => {bool = false};
-    }, [props.directConv.id])
-
-    useEffect(() => {
-        let bool = true;
-        const getChanName = async () => {
-            if (users.length == 2) {
-                users.forEach((u: any) => {
-                    if (u.user.username !== props.userName && bool)
-                        setName(u.user.username)
-                });
-            }
-        };
-        getChanName();
-        return () => {bool = true}
-    }, [props.directConv, props.setCurrentChannelId, props.userName, users])
-
-    function setCurentChannelId(event: SyntheticEvent) {
-        event.preventDefault();
-        props.setCurrentChannelId(props.directConv.id)
-    }
+    }, [props.directConv.id, props.userName])
 
     return (
-        <ul key={props.directConv.id} onClick={setCurentChannelId}>
-            {name}
-        </ul>
+        <Button variant="outlined" size="small" onClick={() => props.setCurrentChannelId(props.directConv.id)}>{name}</Button>
     )
 }
 
@@ -105,20 +89,18 @@ type SideBarDirectConvsProps = {
     currentChannelId: number;
     setCurrentChannelId: Function;
 }
+
 const SideBarDirectConvs = (props: SideBarDirectConvsProps) => {
     const [directConvs, setDirectConvs] = useState<Array<Chan>>([]);
 
     useEffect(() => {
-        let bool = true;
-        let userId: number = props.userId;
         const getChans = async () => {
             try {
-                const {data} = await axios.get('chat/getChansByUserId', {params: {userId}})
+                const {data} = await axios.post('chat/getChansByUserId', {userId: props.userId})
                 if (data) {
                     let res: Chan[];
                     res = data.filter((channel: any) => channel.isDirectConv);
-                    if (bool)
-                        setDirectConvs(res);
+                    setDirectConvs(res);
                 }
             }
             catch (error) {
@@ -126,7 +108,6 @@ const SideBarDirectConvs = (props: SideBarDirectConvsProps) => {
             }
         }
         getChans();
-        return () => {bool = false}
     }, [props.userId]);
 
     return (
@@ -134,9 +115,13 @@ const SideBarDirectConvs = (props: SideBarDirectConvsProps) => {
             <Divider orientation="left" style={{ color: "#6281ca"}}>
                 Direct Messages
             </Divider>
-            {directConvs.map((conv: Chan) => (
-                <RenderDirectConvs key={conv.id} setCurrentChannelId={props.setCurrentChannelId} userName={props.userName} directConv={conv} />
-            ))}
+            <Col>
+                {directConvs.map((conv: Chan) => (
+                    <Row key={conv.id} style={{marginLeft: "25px", padding: "5px"}}>
+                        <RenderDirectConvs key={conv.id} setCurrentChannelId={props.setCurrentChannelId} userName={props.userName} directConv={conv} />
+                    </Row>
+                ))}
+            </Col>
         </div>
     )
 }
@@ -153,8 +138,10 @@ export const SideBar = (props: SideBarProps) => {
         <div>
             <SideBarChannels setCurrentChannelId={props.setCurrentChannelId} userId={props.userId} />
             <SideBarDirectConvs userId={props.userId} userName={props.userName} currentChannelId={props.currentChannelId} setCurrentChannelId={props.setCurrentChannelId} />
-            <Divider orientation="left" style={{ color: "#6281ca"}}>
-                <Link to="createConv">Create a new conversation</Link>
+            <Divider orientation="center" style={{ color: "#6281ca"}}>
+                <Link to="createConv">
+                    <AddIcon color="primary" />
+                </Link>
             </Divider>
         </div>
     )

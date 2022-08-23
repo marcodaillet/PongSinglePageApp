@@ -7,6 +7,8 @@ import { UserModule } from './user/user.module';
 import { ChatModule } from './chat/chat.module';
 import { GameModule } from './game/game.module';
 import { AuthModule } from './user/authentication/authentication.module';
+import { MessagesModule } from './chat/messages/messages.module';
+import { ChatGatewayModule } from './chat/chat.gateway.module';
 
 @Module({
   imports: [
@@ -21,10 +23,12 @@ import { AuthModule } from './user/authentication/authentication.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    AuthModule,
     UserModule,
-    ChatModule,
     GameModule,
-    AuthModule
+    ChatModule,
+    MessagesModule,
+    ChatGatewayModule,
   ],
   controllers: [AppController],
   providers: [AppService],

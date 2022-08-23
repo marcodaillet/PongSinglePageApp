@@ -42,7 +42,7 @@ export const CreateGroupConv = () => {
             try {
                 const {data} = await axios.get('user/getUserId');
                 if (bool)
-                    setUserId(data)
+                    setUserId(data.userId)
                 allUsers.forEach((user: User) => {
                     if (user.id === userId)
                         setChanUsers([user]);
@@ -60,7 +60,7 @@ export const CreateGroupConv = () => {
         event.preventDefault();
         if (success) {
             try {
-                await axios.post('newChan', {name: chanName, isPrivate: isPrivate, isDirectConv: false, adminId: userId, users: chanUsers, password: password}); 
+                await axios.post('chat/newChan', {name: chanName, isPrivate: isPrivate, isDirectConv: false, adminId: userId, users: chanUsers, password: password}); 
                 setRedirection(true);
             }
             catch (error) {
@@ -71,7 +71,7 @@ export const CreateGroupConv = () => {
 
     useEffect(() => {
         if (redirection && success)
-            return (navigate('/chat'));
+            return (navigate('/social/chat'));
     })
 
     function selectedUser(selected: User[]) {

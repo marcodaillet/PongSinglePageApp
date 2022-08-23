@@ -1,9 +1,12 @@
-import { CountertopsOutlined } from "@mui/icons-material";
-import { Divider } from "antd";
+import { Col, Divider, Row } from "antd";
+import "antd/dist/antd.min.css";
+import styles from "./chatFeed.css"
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ExitToApp } from '@mui/icons-material';
+import { ChannelMessages } from "./ChatMessages";
+import { Button } from "@mui/material";
 
 type LeaveChanProps = {
     userId: number;
@@ -26,9 +29,9 @@ const LeaveChan = (props: LeaveChanProps) => {
 
     return (
         <div>
-            <button onClick={LeaveChan}>
-                <ExitToApp></ExitToApp>
-            </button>
+            <Button variant="contained" onClick={LeaveChan} size="medium">
+                <ExitToApp fontSize="medium"></ExitToApp>
+            </Button>
         </div>
     )
 }
@@ -45,12 +48,13 @@ const ChanHeader = (props: ChanHeaderProps) => {
     const [name, setName] = useState('');
     const [isAdmin, setIsAdmin] = useState(false);
     const [rediToAdm, setRediToAdm] = useState(false);
+
     useEffect(() => {
         let bool = true;
         const getName = async () => {
             if (props.currentChannelId) {
                 try {
-                    const {data} = await axios.post('chat/getChanById', {id: props.currentChannelId})
+                    const {data} = await axios.post('chat/getChanById', {chanId: props.currentChannelId})
                     if (bool)
                         setName(data.name);
                 }
@@ -70,7 +74,7 @@ const ChanHeader = (props: ChanHeaderProps) => {
         let bool = true;
         const isAdmin = async () => {
             try {
-                const {data} = await axios.post('chat/idAdmin', {userId: props.userId, chanId: props.currentChannelId})
+                const {data} = await axios.post('chat/isAdmin', {userId: props.userId, chanId: props.currentChannelId})
                 if (bool)
                     setIsAdmin(data);
             }
@@ -80,22 +84,30 @@ const ChanHeader = (props: ChanHeaderProps) => {
         }
         isAdmin();
         return () => {bool = false};
-    }, [props.currentChannelId]);
+    }, [props.currentChannelId, props.userId]);
 
     useEffect(() => {
         if (rediToAdm)
-            return (navigate('/chat/admin', {state: props.currentChannelId}))
+            return (navigate('/social/chat/adminpanel', {state: {currentChannelId: props.currentChannelId}}))
     })
 
     return (
         <div>
             <Divider orientation="center" style={{color: "#6281ca"}}> {name} </Divider>
-            <div>
-                {props.currentChannelId ? ( <LeaveChan userId={props.userId} currentChannelId={props.currentChannelId} /> ) : null }
-            </div>
-            <div>
-                {isAdmin && !props.isDirectConv ? (<button type="button" onClick={() => setRediToAdm(true)}>Admin Panel</button>) : null }
-            </div>
+            
+            <Row>
+                <Col style={{padding: "15px"}}>
+                    <div>
+                        {props.currentChannelId ? ( <LeaveChan userId={props.userId} currentChannelId={props.currentChannelId} /> ) : null }
+                    </div>
+                </Col>
+                <Col  style={{padding: "15px"}}>
+                    <div>
+                        {isAdmin && !props.isDirectConv ? (<Button variant="contained" size="medium" onClick={() => setRediToAdm(true)}>Admin Panel</Button>) : null }
+                    </div>
+                </Col>
+                
+            </Row>
         </div>
     )
 }
@@ -144,8 +156,6 @@ type ChatFeedProps = {
 }
 
 export const ChatFeed = (props: ChatFeedProps) => {
-    const navigate = useNavigate();
-    const chanId = props.currentChannelId;
     const [passwordSuccess, setPasswordSuccess] = useState(false);
     const [isPrivate, setIsPrivate] = useState(false);
     const [isDirectConv, setIsDirectConv] = useState(false);
@@ -154,7 +164,7 @@ export const ChatFeed = (props: ChatFeedProps) => {
         let bool = true;
         const getChanInfo = async() => {
             try {
-                const {data} = await axios.post('chat/getChanById', {chanId: chanId});
+                const {data} = await axios.post('chat/getChanById', {chanId: props.currentChannelId});
                 if (bool) {
                     setIsDirectConv(data.isDirectConv);
                     setIsPrivate(data.isPrivate);
@@ -169,14 +179,17 @@ export const ChatFeed = (props: ChatFeedProps) => {
     }, [props.currentChannelId])
 
     return (
-        <div>
+        <div className="chatFeed">
             {isPrivate && !passwordSuccess ? (
                 <PrivateGuard currentChannelId={props.currentChannelId} passwordSuccess={passwordSuccess} setPasswordSuccess={setPasswordSuccess} />
             ) : (
             <>
                 <ChanHeader userId={props.userId} isDirectConv={isDirectConv} currentChannelId={props.currentChannelId} setCurrentChannelId={props.setCurrentChannelId} />
+                { props.currentChannelId ? 
+                        <ChannelMessages currentChannelId={props.currentChannelId} userId={props.userId} />
+                    : null
+                    }
             </>
-            
         )}
         </div>
     )

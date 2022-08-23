@@ -11,7 +11,6 @@ const TwoFactor = () => {
         const getRedirect = async () => {
             try {
                 const user = await axios.get('userData');
-                console.log(user);
                 if (user.data.twofa === true) {
                     setRedirectDisable(true);
                 }
@@ -33,7 +32,7 @@ const TwoFactor = () => {
         else if (redirectDisable) {
             return navigate("/user/disabletwofactor")
         }
-    },[redirectEnable, redirectDisable]);
+    },[redirectEnable, redirectDisable, navigate]);
 
     return (
         <div></div>
