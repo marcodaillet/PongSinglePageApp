@@ -1,6 +1,6 @@
 import { Col, Divider, Row } from "antd";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { Chan } from "./../../../../../datamodels/chan"
 import LockIcon from '@mui/icons-material/Lock';
 import { Link } from "react-router-dom";
@@ -33,6 +33,20 @@ const SideBarChannels = (props: SideBarChannelsProps) => {
         return () => {bool = false}
     }, [props.userId]);
 
+    let checkIfBanned = async(e: SyntheticEvent, chanId: number) => {
+        e.preventDefault();
+        try {
+            const {data} = await axios.post("chat/isBanned", {userId: props.userId, chanId: chanId});
+            if (data === true)
+                alert("You have been banned from this channel")
+            else
+                props.setCurrentChannelId(chanId)
+        }
+        catch (error) {
+            console.log("Couldn't check if user was banned")
+        }
+    }
+
     return (
         <div>
             <Divider orientation={"center"} style={{ color: "#6281ca"}}>
@@ -41,7 +55,7 @@ const SideBarChannels = (props: SideBarChannelsProps) => {
             <Col>
             {chans.map((chan: Chan) => (
                 <Row key={chan.id} style={{marginLeft: "25px", padding: "5px"}}>
-                    <Button variant="outlined" size="small" onClick={() => props.setCurrentChannelId(chan.id)} endIcon={(chan.isPrivate ? <LockIcon></LockIcon> : null)}>{chan.name}</Button>
+                    <Button variant="outlined" size="small" onClick={(e) => checkIfBanned(e, chan.id)} endIcon={(chan.isPrivate ? <LockIcon></LockIcon> : null)}>{chan.name}</Button>
                 </Row>
             ))}
             </Col>
@@ -53,10 +67,26 @@ type RenderDirectConvsProps = {
     setCurrentChannelId: Function;
     userName:string;
     directConv: Chan;
+    chanId: number;
+    userId: number;
 }
 const RenderDirectConvs = (props: RenderDirectConvsProps) => {
     const [name, setName] = useState('');
     
+    let checkIfBanned = async(e: SyntheticEvent, chanId: number) => {
+        e.preventDefault();
+        try {
+            const {data} = await axios.post("chat/isBanned", {userId: props.userId, chanId: chanId});
+            if (data === true)
+                alert("You have been banned from this channel")
+            else
+                props.setCurrentChannelId(chanId)
+        }
+        catch (error) {
+            console.log("Couldn't check if user was banned")
+        }
+    }
+
     useEffect(() => {
         let bool = true;
         const getUsers = async () => {
@@ -79,7 +109,7 @@ const RenderDirectConvs = (props: RenderDirectConvsProps) => {
     }, [props.directConv.id, props.userName])
 
     return (
-        <Button variant="outlined" size="small" onClick={() => props.setCurrentChannelId(props.directConv.id)}>{name.length !== 0 ? name : props.userName}</Button>
+        <Button variant="outlined" size="small" onClick={(e) => checkIfBanned(e, props.chanId)}>{name.length !== 0 ? name : props.userName}</Button>
     )
 }
 
@@ -118,7 +148,7 @@ const SideBarDirectConvs = (props: SideBarDirectConvsProps) => {
             <Col>
                 {directConvs.map((conv: Chan) => (
                     <Row key={conv.id} style={{marginLeft: "25px", padding: "5px"}}>
-                        <RenderDirectConvs key={conv.id} setCurrentChannelId={props.setCurrentChannelId} userName={props.userName} directConv={conv} />
+                        <RenderDirectConvs key={conv.id} setCurrentChannelId={props.setCurrentChannelId} userName={props.userName} directConv={conv} userId={props.userId} chanId={conv.id} />
                     </Row>
                 ))}
             </Col>

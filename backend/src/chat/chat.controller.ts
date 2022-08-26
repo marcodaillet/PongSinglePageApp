@@ -42,7 +42,9 @@ export class ChatController {
         let chatUser = await this.chatService.getChatUserByChatId(data.chanId)
         for (let i = 0; chatUser[i]; i++)
         {
-            res.push(await this.userService.findOne(chatUser[i]));
+            let user = await this.userService.findOne(chatUser[i]);
+            user.userType = await this.chatService.getUserType(data.chanId, chatUser[i]);
+            res.push(user);
         }
         return (res);
     }
@@ -66,14 +68,6 @@ export class ChatController {
     }
 
     @UseGuards(verifyUser)
-    @Post('isAdmin')
-    async isAdmin(@Body() body) {
-        let bool = await this.chatService.isAdmin(body.chanId, body.userId);
-        return (bool);
-    }
-
-
-    @UseGuards(verifyUser)
     @Post('getUserType')
     async getUserType(@Body() body) {
         let ret = await this.chatService.getUserType(body.chanId, body.userId);
@@ -81,9 +75,65 @@ export class ChatController {
     }
 
     @UseGuards(verifyUser)
+    @Post('isAdmin')
+    async isAdmin(@Body() body) {
+        let ret = await this.chatService.getUserType(body.chanId, body.userId);
+        if (ret === 0)
+            return (true)
+        else
+            return (false);
+    }
+
+    @UseGuards(verifyUser)
+    @Post('isMuted')
+    async isMuted(@Body() body) {
+        let ret = await this.chatService.getUserType(body.chanId, body.userId);
+        if (ret === 2)
+            return (true)
+        else
+            return (false);
+    }
+
+    @UseGuards(verifyUser)
+    @Post('isBanned')
+    async isBanned(@Body() body) {
+        let ret = await this.chatService.getUserType(body.chanId, body.userId);
+        if (ret === 3)
+            return (true)
+        else
+            return (false);
+    }
+
+    @UseGuards(verifyUser)
     @Post('deleteUser')
     async deleteUser(@Body() body) {
         let ret = await this.chatService.deleteUserFromChat(body.chanId, body.userId);
+        return (ret);
+    }
+
+    @UseGuards(verifyUser)
+    @Post('updateUserStatus')
+    async updateUserStatus(@Body() body) {
+        let ret = await this.chatService.updateUserStatus(body.userId, body.status, body.chanId);
+        return (ret);
+    }
+
+    @UseGuards(verifyUser)
+    @Post('changePassword')
+    async changePassword(@Body() body) {
+        let ret = await this.chatService.mouvPasswordChatById(body.chanId, body.newPassword);
+        console.log(typeof(body.newPassword) + body.newPassword + "#")
+        if (body.newPassword === "")
+            await this.chatService.mouvIsPrivateChatById(body.chanId,false)
+        else
+            await this.chatService.mouvIsPrivateChatById(body.chanId,true)
+        return (ret);
+    }
+
+    @UseGuards(verifyUser)
+    @Post('checkPassword')
+    async checkPassword(@Body() body) {
+        let ret = await this.chatService.checkPassword(body.chanId, body.password);
         return (ret);
     }
 }

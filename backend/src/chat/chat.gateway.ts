@@ -19,10 +19,8 @@ export class ChatGateway
     }
 
     handleConnection(client: Socket, ...args: any[]) {
-        console.log("CONNECTION")
     }
 
     handleDisconnect(client: Socket) {
-        console.log("DISCONNECTION")
     }
 }

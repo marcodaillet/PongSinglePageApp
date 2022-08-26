@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { ExitToApp } from '@mui/icons-material';
 import { ChannelMessages } from "./ChatMessages";
 import { Button } from "@mui/material";
-import { io } from "socket.io-client";
 
 type LeaveChanProps = {
     userId: number;
@@ -22,8 +21,6 @@ const LeaveChan = (props: LeaveChanProps) => {
                 await axios.post('chat/deleteUser', {userId: props.userId, chanId: props.currentChannelId});
                 props.setCurrentChannelId(0);
                 window.location.reload();
-                // let websock = io(`http://localhost:8000`);
-                // websock.emit("message", {chanId: props.currentChannelId, senderId: props.userId, content: `${props.userId} has left the channel`, timestamp: new Date()});
             }
             catch (error) {
                 console.log("Couldn't remove user from the channel");
@@ -93,7 +90,7 @@ const ChanHeader = (props: ChanHeaderProps) => {
 
     useEffect(() => {
         if (rediToAdm)
-            return (navigate('/social/chat/adminpanel', {state: {currentChannelId: props.currentChannelId}}))
+            return (navigate('/social/chat/adminpanel', {state: {currentChannelId: props.currentChannelId, userId: props.userId}}))
     })
 
     return (
@@ -103,15 +100,14 @@ const ChanHeader = (props: ChanHeaderProps) => {
             <Row>
                 <Col style={{padding: "15px"}}>
                     <div>
-                        {props.currentChannelId ? ( <LeaveChan userId={props.userId} currentChannelId={props.currentChannelId} setCurrentChannelId={props.setCurrentChannelId} /> ) : null }
+                        { props.currentChannelId ? ( <LeaveChan userId={props.userId} currentChannelId={props.currentChannelId} setCurrentChannelId={props.setCurrentChannelId} /> ) : null }
                     </div>
                 </Col>
                 <Col  style={{padding: "15px"}}>
                     <div>
-                        {isAdmin && !props.isDirectConv ? (<Button variant="contained" size="medium" onClick={() => setRediToAdm(true)}>Admin Panel</Button>) : null }
+                        { isAdmin && !props.isDirectConv ? (<Button variant="contained" size="medium" onClick={() => setRediToAdm(true)}>Admin Panel</Button>) : null }
                     </div>
                 </Col>
-                
             </Row>
         </div>
     )
@@ -191,7 +187,7 @@ export const ChatFeed = (props: ChatFeedProps) => {
             <>
                 <ChanHeader userId={props.userId} isDirectConv={isDirectConv} currentChannelId={props.currentChannelId} setCurrentChannelId={props.setCurrentChannelId} />
                 { props.currentChannelId ? 
-                        <ChannelMessages currentChannelId={props.currentChannelId} userId={props.userId} />
+                        <ChannelMessages currentChannelId={props.currentChannelId} userId={props.userId} setCurrentChannelId={props.setCurrentChannelId}/>
                     : null
                     }
             </>

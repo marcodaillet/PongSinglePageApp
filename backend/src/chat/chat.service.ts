@@ -98,6 +98,7 @@ export class ChatService {
     }
 
     async mouvIsPrivateChatById(id:number, isPrivate:boolean){
+        console.log("We come here with " + isPrivate)
         let res = await this.ChatRepository.findOneBy({
             id: id
         });
@@ -116,6 +117,7 @@ export class ChatService {
     }
 
     async mouvPasswordChatById(id:number, password:string){
+        console.log("Puttin " + password + " as new pwd")
         let res = await this.ChatRepository.findOneBy({
             id: id
         });
@@ -123,6 +125,17 @@ export class ChatService {
         await this.ChatRepository.save(res);
         return (res);
     }
+
+    async checkPassword(id: number, password: string) {
+        let res = await this.ChatRepository.findOneBy({
+            id: id
+        });
+        if (res.password !== password)
+            return (false);
+        else
+            return (true);
+    }
+
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //@@@@@@@@@@@ fin mouv @@@@@@@@@@@@@@@@@@@@@@
@@ -193,4 +206,15 @@ export class ChatService {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //@@@@@@@@@@@ fin delerte @@@@@@@@@@@@@@@@@@@
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+    async updateUserStatus(userId: number, status: number, chanId: number) {
+        let allUsers = await this.ChatUserRepository.find();
+        allUsers.forEach((user: ChatUser) => {
+            if (user.userId === userId && user.chatId === chanId) {
+                user.userType = status;
+            }
+        })
+        this.ChatUserRepository.save(allUsers);
+    }
+
 }

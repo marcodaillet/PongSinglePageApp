@@ -2,7 +2,7 @@ import { Typography } from "@mui/material";
 import axios from "axios";
 import { SyntheticEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { HeroContainer, HeroContent } from "../../../PlayGame";
+import "./chatFeed.css"
 
 type PasswordSettingsProps = {
     currentChanId: number;
@@ -13,7 +13,7 @@ export const PasswordSettings = (props: PasswordSettingsProps) => {
     const [isPrivate, setIsPrivate] = useState(false);
     const [input, setInput] = useState('');
     const [fail, setFail] = useState(false);
-    const [redi, setRedi] = useState(false)
+    const [success, setSuccess] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [render, setRender] = useState(false);
 
@@ -33,15 +33,17 @@ export const PasswordSettings = (props: PasswordSettingsProps) => {
         return () => {bool = false};
     }, [props.currentChanId]);
 
-    async function checkInput() {
+    let checkInput = async(event: SyntheticEvent) => {
+        event.preventDefault();
         try {
             const {data} = await axios.post('chat/checkPassword', {password: input, chanId: props.currentChanId});
+            console.log(data)
             if (data === true) {
-                setRender(true);
+                setSuccess(true);
                 setFail(false);
             }
             else {
-                setFail(false);
+                setFail(true);
             }
         }
         catch (error) {
@@ -51,7 +53,8 @@ export const PasswordSettings = (props: PasswordSettingsProps) => {
 
     async function removePassword() {
         try {
-            await axios.post('chat/removePassword', {chanId: props.currentChanId});
+            await axios.post('chat/changePassword', {newPassword: "", chanId: props.currentChanId});
+            alert("Password has successfully been remove")
             window.location.reload();
         }
         catch (error) {
@@ -62,8 +65,9 @@ export const PasswordSettings = (props: PasswordSettingsProps) => {
     let submit = async (event: SyntheticEvent) => {
         event.preventDefault();
         try {
-            await axios.post('chat/changePassword', {newPassword: input, chanId: props.currentChanId});
-            setRedi(true);
+            await axios.post('chat/changePassword', {newPassword: newPassword, chanId: props.currentChanId});
+            alert("Password has successfully been updated")
+            window.location.reload();
         }
         catch (error) {
             console.log("Couldn't change channel password");
@@ -74,8 +78,8 @@ export const PasswordSettings = (props: PasswordSettingsProps) => {
         if (render) {
             return (
                 <form onSubmit={submit}>
-                    <div>
-                        <label htmlFor="floatingInput">New Password</label>
+                    <div style={{padding: "10px"}}>
+                        <label htmlFor="floatingInput"> New Password </label>
                         <input required type="password" id="floatingInput" onChange={(e) => setNewPassword(e.target.value)}></input>
                         <button type="submit">Submit</button>
                     </div>
@@ -87,31 +91,38 @@ export const PasswordSettings = (props: PasswordSettingsProps) => {
         }
     }
 
-    useEffect(() => {
-        if (redi)
-            return (navigate('/social/chat'))
-    })
-
     if (isPrivate) {
         return (
-            <HeroContainer>
-                <label htmlFor="floatingInput">Enter current password</label>
-                { fail ? (<Typography>Sorry wrong password try again</Typography>) : <p></p> }
-                <input required type="password" id="floatingInput" onChange={(e) => setInput(e.target.value)}></input>
-                <div>
-                    <button type="submit" onClick={checkInput}>Change password</button>
-                    <button type="submit" onClick={removePassword}>Remove password</button>
-                </div>
-            </HeroContainer>
+            <div className="passWordDiv">
+                <form onSubmit={checkInput}>
+                    <div style={{padding: "10px"}}>
+                        { fail === false ? <label htmlFor="floatingInput"> Enter current password </label> : <label htmlFor="floatingInput"> Wrong input, please try again </label> }
+                        <input required type="password" id="floatingInput" onChange={(e) => setInput(e.target.value)}></input>
+                        <button>Submit</button>
+                    </div>
+                </form>
+                {
+                    success ?
+                    <div>
+                        <div>
+                            <button type="submit" onClick={() => setRender(!render)}>Change password</button>
+                            <button type="submit" onClick={removePassword}>Remove password</button>
+                            {renderSettings()}
+                        </div>
+                    </div>
+                    :
+                    null
+                }
+            </div>
         )
     }
     else {
         return (
-            <HeroContainer>
-                <input className="form-check-input" type="checkbox" value="" id="defaultCheck1" onChange={() => setRender(true)}/>
-                <label className="form-check-label" htmlFor="defaultCheck1">Add password to channel</label>
+            <div className="passWordDiv">
+                <label className="form-check-label" htmlFor="defaultCheck1">Add password </label>
+                <input className="form-check-input" type="checkbox" value="" id="defaultCheck1" onChange={() => setRender(!render)}/>
                 {renderSettings()}
-            </HeroContainer>
+            </div>
         )
     }
 }

@@ -34,4 +34,6 @@ export class User {
     )
     @JoinTable()
     myChat: Chat[];
+    @Column({nullable: true})
+    userType?: number;
 }

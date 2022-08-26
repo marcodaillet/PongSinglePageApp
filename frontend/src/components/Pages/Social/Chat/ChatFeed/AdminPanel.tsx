@@ -1,25 +1,26 @@
-import { ContactPageSharp, IndeterminateCheckBox, SocialDistance, SosOutlined } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { Divider, Typography } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import User from "../../../../../datamodels/user";
-import { HeroContainer } from "../../../PlayGame";
+import { useLocation, useNavigate } from "react-router-dom";
+import { User } from "../../../../../datamodels/user";
 import { PasswordSettings } from "./PasswordSettings";
+import "./chatFeed.css"
 
 type AdminPanelProps = {
     currentChannelId: number;
+    userId: number;
 }
 
 export const AdminPanel = (props: any) => {
     const navigate = useNavigate();
     const [redi, setRedi] = useState(false);
     const [chanUsers, setChanUsers] = useState<User[]>([]);
-
+    const [notAdmin, setNotAdmin] = useState(false)
     const loc = useLocation();
     const sta = loc.state as AdminPanelProps;
     const chanId = sta.currentChannelId;
+    const userId = sta.userId
 
     useEffect(() => {
         let bool = true;
@@ -39,44 +40,39 @@ export const AdminPanel = (props: any) => {
 
     useEffect(() => {
         let bool = true;
-        const getChanUsersTypes = async() => {
-            try {
-                chanUsers.forEach(async(user: User) => {
-                    const {data} = await axios.post('chat/getUserType', {chanId: chanId, userId: user.id});
-                    user.userType = data;
+        const isAdmin = async() => {
+                chanUsers.forEach((user: User) => {
+                    if (user.id === userId) {
+                        if (user.userType !== 0) {
+                            setNotAdmin(true);
+                        }
+                    } 
                 })
-            }
-            catch (error) {
-                console.log("Couldn't fetch channel user types");
-            }
         }
-        getChanUsersTypes();
-        return () => {bool = false};
+        isAdmin();
+        return () => {bool = false}
     }, [chanUsers]);
 
-    async function updateUserStatus(userId: number, status: string) {
-        try {
-            await axios.post('chat/updateUserStatus', {userId: userId, status: status, chanId: props.locations.state.currentChanId});
-            if (status == "NORMAL")
-                alert("User parameters reseted")
-            else if (status == "ADMIN")
-                alert("User is now an admin on this channel")
-            else if (status == "MUTED")
-                alert("User is now muted");
-        }
-        catch (error) {
-            console.log("Couldn't update user status");
-        }
-    }
+    useEffect(() => {
+        if (notAdmin)
+            return (navigate('/social/chat'))
+    })
 
-    async function kickUser(userId: number) {
+    async function updateUserStatus(userId: number, status: number) {
         try {
-            await axios.post('chat/kickUser', {userId: userId, chanId: chanId});
-            alert("User has been kicked from this channel");
+            await axios.post('chat/updateUserStatus', {userId: userId, status: status, chanId: chanId});
+            if (status === 0)
+                alert("User is now an admin on this channel")
+            else if (status === 1)
+                alert("User is now a normal user")
+            else if (status === 2)
+                alert("User is now muted, you can unmute him wheneven you want");
+            else if (status === 3)
+                alert("User is now banned, you can unban him wheneven you want")
             window.location.reload();
         }
         catch (error) {
-            console.log("Couldn't kick user from this channel");
+            console.log("Couldn't update user status");
         }
     }
 
@@ -85,25 +81,25 @@ export const AdminPanel = (props: any) => {
             return navigate('/social/chat');
     })
 
-    console.log(chanUsers)
     return (
         <div>
             <Divider>
                 <Typography> Admin Panel </Typography>
             </Divider>
             <div style={{overflowX: "auto"}}>
-                <table style={{width: "100%",textAlign: "center"}}>
-                    <thead></thead>
+                <table className="userAdminTable">
+                    <thead/>
                     <tbody>
-                        {chanUsers.map((item: User) => (
-                            <tr style={{borderBottom: "1px solid #ddd"}} key={item.id}>
-                                <td >{item.username}</td>
-                                <td>User Type is {item.userType}</td>
-                                <td>{item.userType === 0 || item.userType === 2 || item.userType === 4 ? "" : <Button size="small" variant="contained" onClick={() => kickUser(item.id)}>Kick</Button>}</td>
-                                <td>{item.userType === 1 || item.userType === 2 || item.userType === 3 ? "" : <Button size="small" variant="contained" onClick={() => updateUserStatus(item.id, "MUTE")}>Mute</Button>}</td>
-                                <td>{item.userType === 1 || item.userType === 2 || item.userType === 4 ? "" : <Button size="small" variant="contained" onClick={() => updateUserStatus(item.id, "ADMIN")}>Make Admin</Button>}</td>
-                                <td>{item.userType === 2 ? "" : <Button size="small" variant="contained" onClick={() => updateUserStatus(item.id, "NORMAL")}>UnMake Admin</Button>}</td>
-                            </tr>
+                        {chanUsers.map((user: User) => (
+                            <tr key={user.id}>
+                                <td>{user.username}</td>
+                                {user.userType !== 1 ? null : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 0)}>Make Admin</Button></td>}
+                                {user.userType !== 0 ? null : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 1)}>UnMake Admin</Button></td>}
+                                {user.userType !== 1 ? null : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 2)}>Mute</Button></td>}
+                                {user.userType !== 2 ? null : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 1)}>UnMute</Button></td>}
+                                {user.userType !== 1 && user.userType !== 2 ? null : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 3)}>Ban</Button></td>}
+                                {user.userType !== 3 ? null : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 1)}>UnBan</Button></td>}
+                            </tr>     
                         ))}
                     </tbody>
                 </table>
@@ -112,6 +108,9 @@ export const AdminPanel = (props: any) => {
                 <Typography> Password Settings </Typography>
             </Divider>
                 <PasswordSettings currentChanId={chanId}></PasswordSettings>
+            <Divider>
+                <Button size="medium" variant="contained" onClick={() => {setRedi(!redi)}}>Back</Button>
+            </Divider>
         </div>
     )
 }

@@ -19,3 +19,17 @@
     width: 100%;
     align-items: center;
 }
+
+.userAdminTable {
+    width: 100%;
+    text-align: center;
+}
+
+tr:hover {
+    background-color: lightgrey;
+}
+
+.passWordDiv {
+    text-align: center;
+    padding: 10px;
+}

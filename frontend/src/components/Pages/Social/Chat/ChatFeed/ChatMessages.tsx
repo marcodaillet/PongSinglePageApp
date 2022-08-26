@@ -166,7 +166,6 @@ export const ChatMessage = (props: ChatMessageProps) => {
         getUserType();
         return () => {bool = false}
     }, [props.msg.senderId, props.msg.chanId]);
-    console.log("isOpen " + isOpen)
 
     if (isMute || isBlocked) {
         return (
@@ -188,6 +187,7 @@ export const ChatMessage = (props: ChatMessageProps) => {
 type ChannelMessagesProps = {
     currentChannelId: number;
     userId: number;
+    setCurrentChannelId: Function;
 }
 
 export const ChannelMessages = (props: ChannelMessagesProps) => {
@@ -235,18 +235,37 @@ export const ChannelMessages = (props: ChannelMessagesProps) => {
         };
     }, [websock]);
 
+    let checkIfBanned = async(chanId: number) => {
+        try {
+            const {data} = await axios.post("chat/isBanned", {userId: props.userId, chanId: chanId});
+            if (data === true) {
+                alert("You have been banned from this channel")
+                props.setCurrentChannelId(0);
+            }
+        }
+        catch (error) {
+            console.log("Couldn't check if user was banned")
+        }
+    }
+
     async function submit(e: SyntheticEvent) {
         e.preventDefault();
+        checkIfBanned(props.currentChannelId)
         if (content !== "") {
-            try {
-                setTimestamp(new Date().toLocaleString());
-                await axios.post('messages/newMessage', {chanId: props.currentChannelId, senderId: props.userId, content: content, timestamp: timestamp});
+            const {data} = await axios.post("chat/isMuted", {userId: props.userId, chanId: props.currentChannelId});
+            if (data === false) {
+                try {
+                    setTimestamp(new Date().toLocaleString());
+                    await axios.post('messages/newMessage', {chanId: props.currentChannelId, senderId: props.userId, content: content, timestamp: timestamp});
+                }
+                catch (error) {
+                    console.log("Counldn't send a message");
+                }
+                let websock2 = io(`http://localhost:8000`);
+                websock2.emit("message", {chanId: props.currentChannelId, senderId: props.userId, content: content, timestamp: timestamp});
             }
-            catch (error) {
-                console.log("Counldn't send a message");
-            }
-            let websock2 = io(`http://localhost:8000`);
-            websock2.emit("message", {chanId: props.currentChannelId, senderId: props.userId, content: content, timestamp: timestamp});
+            else
+                alert("You are currently muted on this channel")
             setContent('');
         }
     }
