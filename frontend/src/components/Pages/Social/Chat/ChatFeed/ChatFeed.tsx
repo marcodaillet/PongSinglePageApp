@@ -75,13 +75,15 @@ const ChanHeader = (props: ChanHeaderProps) => {
     useEffect(() => {
         let bool = true;
         const isAdmin = async () => {
-            try {
-                const {data} = await axios.post('chat/isAdmin', {userId: props.userId, chanId: props.currentChannelId})
-                if (bool)
-                    setIsAdmin(data);
-            }
-            catch (error) {
-                console.log("Couldn't fetch admin info");
+            if (props.currentChannelId !== 0) {
+                try {
+                    const {data} = await axios.post('chat/isAdmin', {userId: props.userId, chanId: props.currentChannelId})
+                    if (bool)
+                        setIsAdmin(data);
+                }
+                catch (error) {
+                    console.log("Couldn't fetch admin info");
+                }
             }
         }
         isAdmin();
@@ -125,8 +127,8 @@ const PrivateGuard = (props: PrivateGuardProps) => {
 
     async function checkInput() {
         try {
-            const {data} = await axios.post('chat/getChanById', {chanId: props.currentChannelId});
-            if (data.password !== input) {
+            const {data} = await axios.post('chat/checkPassword', {chanId: props.currentChannelId, password: input});
+            if (data === false) {
                 setInvalid(true);
                 props.setPasswordSuccess(false);
             }

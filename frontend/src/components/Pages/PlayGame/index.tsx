@@ -44,8 +44,7 @@ export const Game = () =>
 
     const navigate = useNavigate();
     const easyWaiting = async () => {
-        //const data = await axios.get('game');
-        return navigate("/game/playing", {state: { userId: userId, type: 1, gameId: -1, invitationId: 74686, canvasX: 800 }});
+        return navigate("/game/playing", {state: { userId: userId, type: 1, gameId: -1, invitationId: -1, canvasX: 800 }});
     }
     const normalWaiting = () => {
         return navigate("/game/playing", {state: { userId: userId, type: 2, gameId: -2, invitationId: -1, canvasX: 800 }});
@@ -66,9 +65,6 @@ export const Game = () =>
                     <Button variant="contained" size="large" style={{ fontSize: 25 }} endIcon={<ArrowForwardIosIcon/>} onClick={normalWaiting}>Normal</Button>
                     <Button variant="contained" size="large" style={{ fontSize: 25 }} endIcon={<ArrowForwardIosIcon/>} onClick={hardWaiting}>Hard</Button>
                 </Grid>
-                {/* <Box sx = {{ flexGrow: 1, p: 7 }} /> */}
-                {/* <Typography color="textSecondary" align="center" marginTop="20px" marginBottom="20px" fontStyle={"italic"}>Click on spectate to watch a currently happening game</Typography>
-                <Button variant="contained" size="large" style={{ fontSize: 25 }} endIcon={<ArrowForwardIosIcon/>} >Spectate</Button> */}
             </HeroContent>
         </HeroContainer>
     )

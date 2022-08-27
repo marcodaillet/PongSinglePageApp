@@ -63,7 +63,7 @@ export const PongLayout = (props: LayoutProps) => {
                 <NavMenu open={isOpen} toggleMenu={toggleMenu}></NavMenu>
                 <Box component="main" sx = {{ flexGrow: 1, p: 3 }}>
                     <DrawerHeader />
-                    <div id="pong">
+                    <div id="pong" style={{textAlign: "center"}}>
 						{props.children}
 					</div>
                 </Box>

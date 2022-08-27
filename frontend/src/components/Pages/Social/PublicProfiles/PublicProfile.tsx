@@ -1,8 +1,9 @@
-import { Typography } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 import { SyntheticEvent, useEffect, useState} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { GameData } from "../../../../datamodels/game";
 import axios from "axios";
+import { Col, Row } from "antd";
 
 export const PublicProfile = (props: any) => {    
     const [user, setUser] = useState({username: "", avatar:"", id: 0});
@@ -99,83 +100,83 @@ export const PublicProfile = (props: any) => {
     return (
         <div className="container profilepage">
             <div className="row">
-                <div className="row profile-content">
-                    <div className="nameAvatar">
-                        <div>
-                            <img className="avatar" src={publicUser.avatar} alt=""></img>
+                <Row align="middle" justify="center">
+                    <Col span={8}>
+                        <div className="nameAvatar">
+                            <div>
+                                <img className="avatarPublicProfile" src={publicUser.avatar} alt=""></img>
+                                <Typography fontSize={32} fontStyle="italic">{publicUser.username}</Typography>
+                            </div>
                         </div>
-                        <div>
-                        <Typography fontSize={32} fontStyle="italic">{publicUser.username}</Typography>
+                        <Grid container direction="row" justifyContent="space-around" alignItems="center" >
+                            <Button variant="contained" size="small" onClick={(e) => {sendInvite(e, publicUser.id)}}>Invite for a game</Button>
+                            <Button variant="contained" size="small" onClick={(e) => {addFriend(e, user.id, publicUser.id)}}>Invite as friend</Button>
+                        </Grid>
+                    </Col>
+                    <Col span={1}>
+                        <div></div>
+                    </Col>
+                    <Col span={8}>
+                        <div className="row profile-content">
+                            <div className="row">
+                                    <Typography fontSize={32} fontStyle="italic">Player Games Statistics</Typography>
+                            </div>
+                            <div className="row">
+                                <table className="customTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Games won</th>
+                                            <th></th>
+                                            <th>Games lost</th>
+                                            <th></th>
+                                            <th>Games Played</th>
+                                            <th></th>
+                                            <th>Rank</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{wins}</td>
+                                            <td></td>
+                                            <td>{looses}</td>
+                                            <td></td>
+                                            <td>{played}</td>
+                                            <td></td>
+                                            <td>{rank}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <div className="row">
+                                    <Typography fontSize={32} fontStyle="italic">Player Games History</Typography>
+                                </div>
+                                <div className="row">
+                                    <table className="customTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Game ID</th>
+                                                <th>Player 1</th>
+                                                <th></th>
+                                                <th>Player 2</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {games.filter((game: GameData) => game.winner_id === publicUser.id || game.looser_id === publicUser.id).map((gameData: GameData) => 
+                                            <tr key={gameData.id}>
+                                                <td>#{gameData.id}</td>
+                                                <td>{gameData.winner_id}: {gameData.winner_point} pts</td>
+                                                <td></td>
+                                                <td>{gameData.looser_id}: {gameData.looser_point} pts</td>
+                                            </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div className="row">
-                        <table className="customTable">
-                            <tbody>
-                                <tr>
-                                    <td><button onClick={(e) => {sendInvite(e, publicUser.id)}}>Invite for a game</button></td>
-                                    <td> - </td>
-                                    <td><button onClick={(e) => {addFriend(e, user.id, publicUser.id)}}>Invite as friend</button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="row">
-                            <Typography fontSize={32} fontStyle="italic">Player Games Statistics</Typography>
-                    </div>
-                    <div className="row">
-                        <table className="customTable">
-                            <thead>
-                                <tr>
-                                    <th>Games won</th>
-                                    <th></th>
-                                    <th>Games lost</th>
-                                    <th></th>
-                                    <th>Games Played</th>
-                                    <th></th>
-                                    <th>Rank</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>{wins}</td>
-                                    <td> - </td>
-                                    <td>{looses}</td>
-                                    <td> - </td>
-                                    <td>{played}</td>
-                                    <td> - </td>
-                                    <td>{rank}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                        <div className="row">
-                            <Typography fontSize={32} fontStyle="italic">Player Games History</Typography>
-                        </div>
-                        <div className="row">
-                            <table className="customTable">
-                                <thead>
-                                    <tr>
-                                        <th>Game ID</th>
-                                        <th>Player 1</th>
-                                        <th> - </th>
-                                        <th>Player 2</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {games.filter((game: GameData) => game.winner_id === publicUser.id || game.looser_id === publicUser.id).map((gameData: GameData) => 
-                                    <tr key={gameData.id}>
-                                        <td>#{gameData.id}</td>
-                                        <td>{gameData.winner_id} - {gameData.winner_point}</td>
-                                        <td> VS </td>
-                                        <td>{gameData.looser_id} - {gameData.looser_point}</td>
-                                    </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             </div>
         </div>
     )

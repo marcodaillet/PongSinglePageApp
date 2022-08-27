@@ -1,11 +1,12 @@
 
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { SyntheticEvent, useEffect, useState } from "react";
 import { GameData } from "../../../../datamodels/game";
 import { User } from "../../../../datamodels/user";
 import "../style/style.css"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Col, Row } from "antd";
 
 export const Profile = () => {
     const [played, setPlayed] = useState(0);
@@ -112,126 +113,125 @@ export const Profile = () => {
 
     return (
         <div className="container profilepage">
-            <div className="row">
-                <div className="row">
+            <Row align="middle" justify="center">
+                <Col span={8}>
                     <div className="nameAvatar">
                         <div>
-                            <img className="avatar" src={user.avatar} alt=""></img>
-                        </div>
-                        <div>
-                        <Typography fontSize={32} fontStyle="italic">{user.username}</Typography>
+                            <img className="avatarPublicProfile" src={user.avatar} alt=""></img>
+                            <Typography fontSize={32} fontStyle="italic">{user.username}</Typography>
                         </div>
                     </div>
                     {
                         user.privateGame !== -1 ? 
-                        <div className="row">
+                        <div>
+                            <Typography>You have a pending game invite</Typography>
+                            <Button variant="contained" size="small"  onClick={acceptInvite} type="button">Accept</Button>
+                        </div>
+                        : null
+                    }
+                    {
+                        friends.length !== 0 ?
+                        <div>
                             <div>
-                                <Typography>You have a pending game invite</Typography>
-                                <button onClick={acceptInvite} type="button">Accept</button>
+                                <Typography fontSize={32} fontStyle="italic">Friends</Typography>
+                            </div>
+                            <div>
+                                <table className="customTable">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Username</th>
+                                            <th>Status</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {friends.map((friend: User) =>
+                                        <tr key={friend.id}>
+                                            <td><img src={`${friend.avatar}`} className="avatar" alt=""></img></td>
+                                            <td>{friend.username}</td>
+                                            <td>{friend.status}</td>
+                                            <td><Button variant="contained" size="small"   onClick={(e) => {removeFriend(e, user.id, friend.id)}} type="button" className="buttonRemove">Remove Friend</Button></td>
+                                            {
+                                                friend.status == "IN GAME" ? <td><button onClick={(e) => {spectateFriend(e, user.id, friend.id)}} type="button" className="buttonRemove">Spectate Game</button></td> : null
+                                            }
+                                        </tr>
+                                        )}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                        : <></>
+                        : null
                     }
-                </div>
-                <div className="row profile-content">
-                    <div className="row">
-                            <Typography fontSize={32} fontStyle="italic">Games Statistics</Typography>
-                    </div>
-                    <div className="row">
-                        <table className="customTable">
-                            <thead>
-                                <tr>
-                                    <th>Games won</th>
-                                    <th></th>
-                                    <th>Games lost</th>
-                                    <th></th>
-                                    <th>Games Played</th>
-                                    <th></th>
-                                    <th>Rank</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>{wins}</td>
-                                    <td> - </td>
-                                    <td>{looses}</td>
-                                    <td> - </td>
-                                    <td>{played}</td>  
-                                    <td> - </td>
-                                    <td>{rank}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
+                    </Col>
+                    <Col span={1}>
+                        <div></div>
+                    </Col>
+                    <Col span={8}>
+                    <div className="row profile-content">
                         <div className="row">
-                            <Typography fontSize={32} fontStyle="italic">Games History</Typography>
+                                <Typography fontSize={32} fontStyle="italic">Games Statistics</Typography>
                         </div>
                         <div className="row">
                             <table className="customTable">
                                 <thead>
                                     <tr>
-                                        <th>Game ID</th>
-                                        <th>Player 1</th>
-                                        <th> - </th>
-                                        <th>Player 2</th>
-                                        <th>Player 1 Score</th>
-                                        <th>Player 2 Score</th>
-                                        <th>Winner</th>
+                                        <th>Games won</th>
+                                        <th></th>
+                                        <th>Games lost</th>
+                                        <th></th>
+                                        <th>Games Played</th>
+                                        <th></th>
+                                        <th>Rank</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {games.filter((game: GameData) => game.winner_id === user.id || game.looser_id === user.id).map((gameData: GameData) => 
-                                    <tr key={gameData.id}>
-                                        <td>#{gameData.id}</td>
-                                        <td>{gameData.winner_id}</td>
-                                        <td> VS </td>
-                                        <td>{gameData.looser_id}</td>
-                                        <td>{gameData.winner_point} points</td>
-                                        <td>{gameData.looser_point} points</td>
-                                        {
-                                        <td>{gameData.winner_id}</td>
-                                        }
+                                    <tr>
+                                        <td>{wins}</td>
+                                        <td></td>
+                                        <td>{looses}</td>
+                                        <td></td>
+                                        <td>{played}</td>  
+                                        <td></td>
+                                        <td>{rank}</td>
                                     </tr>
-                                    )}
                                 </tbody>
                             </table>
                         </div>
+                        <div>
+                            <div className="row">
+                                <Typography fontSize={32} fontStyle="italic">Games History</Typography>
+                            </div>
+                            <div className="row">
+                                <table className="customTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Game ID</th>
+                                            <th>Player 1</th>
+                                            <th></th>
+                                            <th>Player 2</th>
+                                            <th>Winner</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {games.filter((game: GameData) => game.winner_id === user.id || game.looser_id === user.id).map((gameData: GameData) => 
+                                        <tr key={gameData.id}>
+                                            <td>#{gameData.id}</td>
+                                            <td>{gameData.winner_id}: {gameData.winner_point} points</td>
+                                            <td> VS </td>
+                                            <td>{gameData.looser_id}: {gameData.looser_point} points</td>
+                                            {
+                                            <td>{gameData.winner_id}</td>
+                                            }
+                                        </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div className="row">
-                <div className="col-md-6">
-                    <div className="row">
-                        <Typography fontSize={32} fontStyle="italic">Friends</Typography>
-                    </div>
-                    <div className="row">
-                        <table className="customTable">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Username</th>
-                                    <th>Status</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {friends.map((friend: User) =>
-                                <tr key={friend.id}>
-                                    <td><img src={`${friend.avatar}`} className="avatar" alt=""></img></td>
-                                    <td>{friend.username}</td>
-                                    <td>{friend.status}</td>
-                                    <td><button onClick={(e) => {removeFriend(e, user.id, friend.id)}} type="button" className="buttonRemove">Remove Friend</button></td>
-                                    {
-                                        friend.status == "IN GAME" ? <td><button onClick={(e) => {spectateFriend(e, user.id, friend.id)}} type="button" className="buttonRemove">Spectate Game</button></td> : null
-                                    }
-                                </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+                </Col>
+            </Row>
         </div>
     )
 }

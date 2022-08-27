@@ -2,7 +2,7 @@ import { Logger } from "@nestjs/common";
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Socket, Server} from "ws";
 
-@WebSocketGateway(8000, {cors: "*"})
+@WebSocketGateway(8000, {cors: "http://localhost:3001/social/chat"})
 export class ChatGateway
     implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;

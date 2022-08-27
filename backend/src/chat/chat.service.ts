@@ -2,6 +2,7 @@ import { Injectable, Req } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm'
 import { Chat, ChatUser } from './chat.entity';
+import { comparePassword, encodePassword } from './utils/bcrypt';
 
 
 @Injectable()
@@ -117,11 +118,10 @@ export class ChatService {
     }
 
     async mouvPasswordChatById(id:number, password:string){
-        console.log("Puttin " + password + " as new pwd")
         let res = await this.ChatRepository.findOneBy({
             id: id
         });
-        res.password = password;
+        res.password = encodePassword(password);
         await this.ChatRepository.save(res);
         return (res);
     }
@@ -130,10 +130,7 @@ export class ChatService {
         let res = await this.ChatRepository.findOneBy({
             id: id
         });
-        if (res.password !== password)
-            return (false);
-        else
-            return (true);
+        return (comparePassword(password, res.password))
     }
 
 
@@ -150,7 +147,7 @@ export class ChatService {
         res.name = name;
         res.isPrivate = isPrivate;
         res.isDirectConv = isDirectConv;
-        res.password = password;
+        res.password = encodePassword(password);
         await this.ChatRepository.save(res);
         return (res);
     }

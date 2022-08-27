@@ -1,5 +1,5 @@
 .PublicProfilesComponent {
-    background-color: lightgray;
+    background-color: white;
     color: black;
     display: flex;
     align-items: center;
@@ -60,19 +60,24 @@ form {
     margin-bottom: 10px;
 }
 
+th, td {
+    border-bottom: 1px solid darkgray;
+  }
+
+tr:hover {background-color: white;}
+
 .profilepage {
-    background: azure;
     color: black;
     flex-direction: column;
     text-align: center;
     display: flex;
-    background: lightgrey;
+    background: white;
 }
 
 .profile-content {
     height: 75%;
     padding: 20px;
-    background: lightgrey;
+    background: white;
     align-items: center;
     text-align: center;
     justify-content: center;
@@ -103,6 +108,11 @@ form {
 .customTable {
     margin-left: auto;
     margin-right: auto;
+    width: 100%;
+}
+
+.customButton {
+    color: #6281ca;
 }
 
 .avatar {
@@ -112,9 +122,24 @@ form {
     height: 36px;
 }
 
+.avatarPublicProfile{
+    margin-top: 6px;
+    margin-right: 15px;
+    width: 300px;
+    height: 300px;
+}
+
 .nameAvatar {
     display: flex;
     align-items: center;
     text-align: center;
     justify-content: center;
+}
+
+.buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    width: 100%;
 }

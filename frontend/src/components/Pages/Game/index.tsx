@@ -11,10 +11,8 @@
 /* ************************************************************************** */
 
 import axios from "axios";
-import { SyntheticEvent, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import io from "socket.io-client";
-import { HeroContainer, HeroContent } from "../PlayGame";
 
 type PongProps = {
     userId: number,

@@ -35,15 +35,17 @@ const SideBarChannels = (props: SideBarChannelsProps) => {
 
     let checkIfBanned = async(e: SyntheticEvent, chanId: number) => {
         e.preventDefault();
-        try {
-            const {data} = await axios.post("chat/isBanned", {userId: props.userId, chanId: chanId});
-            if (data === true)
-                alert("You have been banned from this channel")
-            else
-                props.setCurrentChannelId(chanId)
-        }
-        catch (error) {
-            console.log("Couldn't check if user was banned")
+        if (chanId !== 0) {
+            try {
+                const {data} = await axios.post("chat/isBanned", {userId: props.userId, chanId: chanId});
+                if (data === true)
+                    alert("You have been banned from this channel")
+                else
+                    props.setCurrentChannelId(chanId)
+            }
+            catch (error) {
+                console.log("Couldn't check if user was banned")
+            }
         }
     }
 
@@ -75,15 +77,17 @@ const RenderDirectConvs = (props: RenderDirectConvsProps) => {
     
     let checkIfBanned = async(e: SyntheticEvent, chanId: number) => {
         e.preventDefault();
-        try {
-            const {data} = await axios.post("chat/isBanned", {userId: props.userId, chanId: chanId});
-            if (data === true)
-                alert("You have been banned from this channel")
-            else
-                props.setCurrentChannelId(chanId)
-        }
-        catch (error) {
-            console.log("Couldn't check if user was banned")
+        if (chanId !== 0) {
+            try {
+                const {data} = await axios.post("chat/isBanned", {userId: props.userId, chanId: chanId});
+                if (data === true)
+                    alert("You have been banned from this channel")
+                else
+                    props.setCurrentChannelId(chanId)
+            }
+            catch (error) {
+                console.log("Couldn't check if user was banned")
+            }
         }
     }
 

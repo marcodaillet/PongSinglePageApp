@@ -62,7 +62,6 @@ export const PublicProfiles = () => {
         e.preventDefault();
         try {
             await axios.post('user/unBlockUser', {userId: user.id, blockeeId: id});
-            // window.location.reload();
             alert("You successfully unblocked this user");
         }
         catch (error) {
@@ -73,16 +72,14 @@ export const PublicProfiles = () => {
     return (
         <main className="PublicProfilesComponent">
             <div className="profiles">
-                <table>
+                <table className="customTable">
                     <thead></thead>
                     <tbody>
                         {users.map((usersData: User) =>
 
                             <tr key={usersData.id} className="users-table">
                                 <td><img src={usersData.avatar} className="avatarIMG" alt=""></img></td>
-                                <td> - </td>
                                 <td>{usersData.username}</td>
-                                <td> - </td>
                                 <td>{ (usersData.id !== user.id) ?
                                         <Link to={"/social/publicprofile"} state={usersData.username} type="button" className="customButton">See profile</Link> 
                                         :
@@ -93,13 +90,13 @@ export const PublicProfiles = () => {
                                         (usersData.id !== user.id) ?
                                         <td>{
                                                 isBlocked(usersData.id) ? 
-                                                <Button onClick={(e) => {unBlockUser(e, usersData.id)}}>Unblock</Button>
+                                                <Button size="large" style={{textTransform: 'none'}} onClick={(e) => {unBlockUser(e, usersData.id)}}>Unblock</Button>
                                                 :
-                                                <Button onClick={(e) => {blockUser(e, usersData.id)}}>Block</Button>
+                                                <Button size="large" style={{textTransform: 'none'}} onClick={(e) => {blockUser(e, usersData.id)}}>Block</Button>
                                             }   
                                         </td>
                                         :
-                                        null
+                                        <td></td>
                                     }
                             </tr>
                         )}
