@@ -18,7 +18,6 @@ export const Register = () => {
         e.preventDefault();
         try {
             await axios.post('register', {username, email, phoneNumber});
-            console.log("success")
             setInvalid(false);
             setRedirect(true);
         }

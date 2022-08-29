@@ -51,7 +51,7 @@ export const Waiting = (props: any) => {
         const isStarting = async () => {
             const gameId = await axios.post('isStarting', {userId});
             if (gameId)
-                return (navigate('/game/game:'+`${gameId}`))
+                return (navigate(`/game/game:${gameId}`))
         }
         isStarting();
     }, [navigate, userId]);

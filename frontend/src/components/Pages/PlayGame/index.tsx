@@ -25,7 +25,6 @@ export const HeroContent = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
 `;
 
 export const Game = () =>
@@ -36,7 +35,8 @@ export const Game = () =>
         let bool = true;
         const getId = async () => {
             const {data} = await axios.get('user/getUserId');
-            setUserId(data.userId)
+            if (bool)
+                setUserId(data.userId)
         }
         getId();
         return () => {bool = false}

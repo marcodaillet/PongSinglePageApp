@@ -48,7 +48,7 @@ const EnableTwoFactor = () => {
         if (redirect && !invalid){
             return navigate("/home");
         }
-    },[redirect]);
+    },[redirect, invalid, navigate]);
 
     return (
         <HeroContainer>

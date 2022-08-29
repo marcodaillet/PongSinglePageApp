@@ -6,8 +6,8 @@
 }
 
 .chatMessages {
-    height: 63vh; /*limit the height to 80% of the page*/
-    overflow-y: auto; /*messages don't fit? add scrollbars*/  
+    height: 63vh;
+    overflow-y: auto; 
 }
 
 .input {
@@ -22,7 +22,6 @@
 
 .userAdminTable {
     width: 100%;
-    text-align: center;
 }
 
 tr:hover {
@@ -32,4 +31,12 @@ tr:hover {
 .passWordDiv {
     text-align: center;
     padding: 10px;
+}
+
+.tableDiv {
+    display: block;
+    overflow-x: auto;
+    margin-left: auto;
+    margin-right: auto;
+    width: 75%;
 }

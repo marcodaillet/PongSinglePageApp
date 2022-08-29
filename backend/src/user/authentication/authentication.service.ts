@@ -30,7 +30,8 @@ export class AuthenticationService {
 
     async verifyTwoFactorSecret(code: string, id: number) {
         const client = await this.userService.findOne(id);
-        return authenticator.verify({token: code, secret: client.twoFactorSecret})
+        const ret = authenticator.verify({token: code, secret: client.twoFactorSecret})
+        return ret
     }
 
     async clientID(request: Request): Promise<number> {
@@ -40,7 +41,7 @@ export class AuthenticationService {
     }
 
     async newUser(@Body() data: RegisterModel, clientID: number) {
-        data.avatar = 'http://localhost:3000/api/media/DefaultAvatar.png';
+        data.avatar = 'http://localhost:3000/api/user/media/DefaultAvatar.png';
         data.id = clientID;
         data.twofa = false;
         data.pendingInvite = false;

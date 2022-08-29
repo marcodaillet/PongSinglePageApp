@@ -36,10 +36,9 @@ export const AdminPanel = (props: any) => {
         }
         getChanUsers();
         return () => {bool = false};
-    }, []);
+    }, [chanId]);
 
     useEffect(() => {
-        let bool = true;
         const isAdmin = async() => {
                 chanUsers.forEach((user: User) => {
                     if (user.id === userId) {
@@ -50,8 +49,7 @@ export const AdminPanel = (props: any) => {
                 })
         }
         isAdmin();
-        return () => {bool = false}
-    }, [chanUsers]);
+    }, [chanUsers, userId]);
 
     useEffect(() => {
         if (notAdmin)
@@ -79,26 +77,26 @@ export const AdminPanel = (props: any) => {
     useEffect(() => {
         if (redi)
             return navigate('/social/chat');
-    })
+    }, [redi, navigate])
 
     return (
         <div>
             <Divider>
                 <Typography> Admin Panel </Typography>
             </Divider>
-            <div style={{overflowX: "auto"}}>
+            <div className="tableDiv">
                 <table className="userAdminTable">
                     <thead/>
                     <tbody>
                         {chanUsers.map((user: User) => (
                             <tr key={user.id}>
                                 <td>{user.username}</td>
-                                {user.userType !== 1 ? null : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 0)}>Make Admin</Button></td>}
-                                {user.userType !== 0 ? null : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 1)}>UnMake Admin</Button></td>}
-                                {user.userType !== 1 ? null : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 2)}>Mute</Button></td>}
-                                {user.userType !== 2 ? null : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 1)}>UnMute</Button></td>}
-                                {user.userType !== 1 && user.userType !== 2 ? null : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 3)}>Ban</Button></td>}
-                                {user.userType !== 3 ? null : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 1)}>UnBan</Button></td>}
+                                {user.userType !== 1 ? <td></td> : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 0)}>Make Admin</Button></td>}
+                                {user.userType !== 0 ? <td></td> : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 1)}>UnMake Admin</Button></td>}
+                                {user.userType !== 1 ? <td></td> : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 2)}>Mute</Button></td>}
+                                {user.userType !== 2 ? <td></td> : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 1)}>UnMute</Button></td>}
+                                {user.userType !== 1 && user.userType !== 2 ? <td></td> : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 3)}>Ban</Button></td>}
+                                {user.userType !== 3 ? <td></td> : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 1)}>UnBan</Button></td>}
                             </tr>     
                         ))}
                     </tbody>
@@ -109,7 +107,7 @@ export const AdminPanel = (props: any) => {
             </Divider>
                 <PasswordSettings currentChanId={chanId}></PasswordSettings>
             <Divider>
-                <Button size="medium" variant="contained" onClick={() => {setRedi(!redi)}}>Back</Button>
+                <Button size="medium" variant="contained" onClick={() => {setRedi(!redi)}}> Back </Button>
             </Divider>
         </div>
     )

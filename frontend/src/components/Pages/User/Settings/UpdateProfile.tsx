@@ -9,11 +9,10 @@ import axios from "axios";
 const UploadImg = (props: {uploaded: (url: string) => void}) => {
 
     const upload = async (files: FileList | null ) => {
-        if (files === null) return;
-
+        if (files === null)
+            return;
         const formData = new FormData();
         formData.append('avatar', files[0]);
-
         try {
             const {data} = await axios.post('user/uploadImage', formData);
             props.uploaded(data.url);

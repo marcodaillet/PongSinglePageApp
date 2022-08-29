@@ -69,7 +69,7 @@ export const Pong = () => {
 	class Historique {
 		constructor(){
 			this.winner_id = myGame.winner;
-			if (this.winner_id != myRaq1.user_id)
+			if (this.winner_id !== myRaq1.user_id)
 			{
 				this.coter_winner = 2;
 				this.looser_id = myRaq1.user_id;
@@ -182,17 +182,17 @@ export const Pong = () => {
 	
 	function mouvRaq(socket, nb)
 	{
-		if (data.userId == myRaq1.user_id && ((nb > 0 && myRaq1.p_y + myRaq1.t_y <= myGame.canvasY) || (nb < 0 && myRaq1.p_y >= 0)))
+		if (data.userId === myRaq1.user_id && ((nb > 0 && myRaq1.p_y + myRaq1.t_y <= myGame.canvasY) || (nb < 0 && myRaq1.p_y >= 0)))
 			socket.emit('mouvRaq', {witchRaq:1, p_y:nb});
-		else if (data.userId == myRaq2.user_id && ((nb > 0 && myRaq2.p_y <= myGame.canvasY) || (nb < 0 && myRaq2.p_y >= 0)))
+		else if (data.userId === myRaq2.user_id && ((nb > 0 && myRaq2.p_y <= myGame.canvasY) || (nb < 0 && myRaq2.p_y >= 0)))
 			socket.emit('mouvRaq', {witchRaq:2, p_y:nb});
 	}
 
 	document.onkeydown = function mouvRaquette(e)
 	{
-	 		if (e.keyCode == 39)//bas
+	 		if (e.keyCode === 39)//bas
 	 			mouvRaq(socket, -5);
-	 		else if (e.keyCode == 37)//haut
+	 		else if (e.keyCode === 37)//haut
 	 			mouvRaq(socket, +5);
 	}
 

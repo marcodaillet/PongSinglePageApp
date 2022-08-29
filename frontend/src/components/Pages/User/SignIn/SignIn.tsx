@@ -1,4 +1,4 @@
-import { AppBar, Box, Button, Container, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Button, Toolbar, Typography } from '@mui/material';
 import React, { Component } from "react"
 import VideogameAssetIcon from '@mui/icons-material/VideogameAsset';
 import { HEADER_HEIGHT } from "../../../../utils/constants";

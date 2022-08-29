@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser'
 import { ValidationPipe } from '@nestjs/common';
 import "reflect-metadata";
-import { WsAdapter } from '@nestjs/platform-ws';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

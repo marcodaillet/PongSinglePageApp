@@ -1,7 +1,5 @@
-import { Typography } from "@mui/material";
 import axios from "axios";
 import { SyntheticEvent, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "./chatFeed.css"
 
 type PasswordSettingsProps = {
@@ -9,7 +7,6 @@ type PasswordSettingsProps = {
 }
 
 export const PasswordSettings = (props: PasswordSettingsProps) => {
-    const navigate = useNavigate();
     const [isPrivate, setIsPrivate] = useState(false);
     const [input, setInput] = useState('');
     const [fail, setFail] = useState(false);

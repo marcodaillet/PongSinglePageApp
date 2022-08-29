@@ -3,7 +3,6 @@ import { AppBar, Box, Toolbar } from '@mui/material';
 import { Squash as MenuButton } from 'hamburger-react';
 import { AppTitle } from './AppTitle';
 import { ThemeSwitcher } from './ThemeSwitcher';
-import { UserAccount } from '../ActionsHandler/index'
 import VideogameAssetIcon from '@mui/icons-material/VideogameAsset';
 import { HEADER_HEIGHT } from '../../utils/constants';
 
@@ -27,17 +26,6 @@ interface HeaderProps {
   toggleMenu: () => void;
 }
 export const Header = ({ toggleMenu }: HeaderProps) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
-
-  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => { setAnchorEl(event.currentTarget); };
-  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => setMobileMoreAnchorEl(event.currentTarget);
-  const handleMobileMenuClose = () => setMobileMoreAnchorEl(null);
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
-  };
-
   return (
         <>
             <AppBar position="fixed" sx = {{

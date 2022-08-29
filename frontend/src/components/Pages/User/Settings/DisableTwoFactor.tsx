@@ -7,10 +7,8 @@ import "../style/style.css"
 
 const DisableTwoFactor = () => {
     const [code, setCode] = useState('');
-    const [QRCode, setQRCode] = useState(' ');
     const [redirect, setRedirect] = useState(false);
     const [invalid, setInvalid] = useState(false);
-    const [twoFa, setTwoFa] = useState(false);
 
     const navigate = useNavigate();
 
@@ -32,7 +30,7 @@ const DisableTwoFactor = () => {
         if (redirect && !invalid){
             return navigate("/home");
         }
-    },[redirect]);
+    },[redirect, invalid, navigate]);
 
     return (
         <HeroContainer>

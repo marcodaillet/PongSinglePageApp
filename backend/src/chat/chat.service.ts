@@ -133,7 +133,6 @@ export class ChatService {
         return (comparePassword(password, res.password))
     }
 
-
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //@@@@@@@@@@@ fin mouv @@@@@@@@@@@@@@@@@@@@@@
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -25,7 +25,6 @@ type UserBubleProps = {
 const {Meta} = Card;
 export const UserBuble = (props: UserBubleProps) => {
     const navigate = useNavigate();
-    const [userData, setUserData] = useState<User>();
     const [name, setName] = useState('')
 
     useEffect(() => {
@@ -34,7 +33,6 @@ export const UserBuble = (props: UserBubleProps) => {
             try {
                 const {data} = await axios.post('user/getUser', {id: props.senderId});
                 if (bool) {
-                    setUserData(data);
                     setName(data.username);
                 }
             }
@@ -130,7 +128,7 @@ export const ChatMessage = (props: ChatMessageProps) => {
         }
         getIsBlocked();
         return () => {bool = false};
-    }, [props.userId]);
+    }, [props.msg.senderId]);
 
     useEffect(() => {
         let bool = true;
@@ -153,14 +151,16 @@ export const ChatMessage = (props: ChatMessageProps) => {
     useEffect(() => {
         let bool = true;
         const getUserType = async() => {
-            try {
-                const {data} = await axios.post('chat/getUserType', {userId: props.msg.senderId, chanId: props.msg.chanId});
-                if (bool && data === 3) {
-                    setIsMute(true);
+            if (props.msg.chanId !== 0) {
+                try {
+                    const {data} = await axios.post('chat/getUserType', {userId: props.msg.senderId, chanId: props.msg.chanId});
+                    if (bool && data === 3) {
+                        setIsMute(true);
+                    }
                 }
-            }
-            catch (error) {
-                console.log("Couldn't fetch user state");
+                catch (error) {
+                    console.log("Couldn't fetch user state");
+                }
             }
         }
         getUserType();
@@ -196,7 +196,6 @@ export const ChannelMessages = (props: ChannelMessagesProps) => {
     const [oneShownPopup, setOneShownPopup] = useState("");
     const [content, setContent] = useState('');
     const [timestamp, setTimestamp] = useState(new Date().toLocaleString());
-    let websock: any;
 
     useEffect(() => {
         let bool = true;
@@ -215,8 +214,7 @@ export const ChannelMessages = (props: ChannelMessagesProps) => {
     }, [props.currentChannelId]);
 
     useEffect(() => {
-        let bool = true;
-        websock = io(`http://localhost:8000`);
+        let websock = io(`http://localhost:8000`);
         websock.on('message', async (args) => {
             const data = JSON.parse(JSON.stringify(args));
             if (data.chanId === props.currentChannelId) {
@@ -229,11 +227,8 @@ export const ChannelMessages = (props: ChannelMessagesProps) => {
                 setNewMessages((prevState: WebSocketMessageType[]) => [...prevState, new_msg]);
             }
         });
-        return () => {
-            websock.close();
-            bool = false;
-        };
-    }, [websock]);
+        return () => { websock.close(); };
+    }, [props.currentChannelId]);
 
     let checkIfBanned = async(chanId: number) => {
         try {

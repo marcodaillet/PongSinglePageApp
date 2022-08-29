@@ -153,7 +153,7 @@ export const Profile = () => {
                                             <td>{friend.status}</td>
                                             <td><Button variant="contained" size="small"   onClick={(e) => {removeFriend(e, user.id, friend.id)}} type="button" className="buttonRemove">Remove Friend</Button></td>
                                             {
-                                                friend.status == "IN GAME" ? <td><button onClick={(e) => {spectateFriend(e, user.id, friend.id)}} type="button" className="buttonRemove">Spectate Game</button></td> : null
+                                                friend.status === "IN GAME" ? <td><button onClick={(e) => {spectateFriend(e, user.id, friend.id)}} type="button" className="buttonRemove">Spectate Game</button></td> : null
                                             }
                                         </tr>
                                         )}

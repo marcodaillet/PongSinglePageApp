@@ -8,7 +8,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LockIcon from '@mui/icons-material/Lock';
 import SettingsIcon from '@mui/icons-material/Settings';
 import HelpIcon from '@mui/icons-material/Help';
-import { Game } from "../components/Pages/PlayGame";
 
 const routes: Array<Route> = [
     {

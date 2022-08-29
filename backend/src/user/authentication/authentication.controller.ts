@@ -14,9 +14,9 @@ export class AuthController {
         private authenticationService: AuthenticationService,
         private userService: UserService,
         private jwtService: JwtService
-    ) {}
-    
-
+        ) {}
+        
+        
     @UseGuards(AuthGuard('intra'))
     @Get('authentication/login')
     async login(@Req() request, @Res({passthrough: true}) response: Response) {
@@ -34,7 +34,37 @@ export class AuthController {
             return response.redirect('http://localhost:3001/home')
         }
     }
+    
+    @UseGuards(verifyUser)
+    @Post('register')
+    async register(@Body() data: RegisterModel, @Req() request: Request) {
+        const clientID = await this.authenticationService.clientID(request);
+        await this.authenticationService.newUser(data, clientID);
+    }
+    
+    @UseGuards(verifyUser)
+    @Get('userData')
+    async getUserData(@Req() request: Request, @Body() data) {
+        const clientID = await this.authenticationService.clientID(request);
+        return await this.userService.findOne(clientID);
+    }
+    
+    @UseGuards(verifyUser)
+    @Post('setOnline')
+    async setOnline(@Req() request: Request) {
+        const clientID = await this.authenticationService.clientID(request);
+        await this.userService.setOnline(clientID);
+    }
 
+    @UseGuards(verifyUser)
+    @Post('logout')
+    async logout(@Req() request: Request, @Res({passthrough: true}) response: Response) {
+        response.clearCookie('clientID');
+        const clientID = await this.authenticationService.clientID(request);
+        await this.userService.setOffline(clientID);
+        return {message: 'Success'};
+    }
+    
     @UseGuards(verifyUser)
     @Get('2fa/generate')
     async activate2fa(@Req() request: Request) {
@@ -72,33 +102,5 @@ export class AuthController {
         return (true);
     }
 
-    @UseGuards(verifyUser)
-    @Post('register')
-    async register(@Body() data: RegisterModel, @Req() request: Request) {
-        const clientID = await this.authenticationService.clientID(request);
-        await this.authenticationService.newUser(data, clientID);
-    }
 
-    @UseGuards(verifyUser)
-    @Get('userData')
-    async getUserData(@Req() request: Request, @Body() data) {
-        const clientID = await this.authenticationService.clientID(request);
-        return await this.userService.findOne(clientID);
-    }
-
-    @UseGuards(verifyUser)
-    @Post('logout')
-    async logout(@Req() request: Request, @Res({passthrough: true}) response: Response) {
-        response.clearCookie('clientID');
-        const clientID = await this.authenticationService.clientID(request);
-        await this.userService.setOffline(clientID);
-        return {message: 'Success'};
-    }
-
-    @UseGuards(verifyUser)
-    @Post('setOnline')
-    async setOnline(@Req() request: Request) {
-        const clientID = await this.authenticationService.clientID(request);
-        await this.userService.setOnline(clientID);
-    }
 }

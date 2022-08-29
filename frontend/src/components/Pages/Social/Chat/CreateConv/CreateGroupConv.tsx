@@ -5,7 +5,6 @@ import User from "../../../../../datamodels/user"
 import { Box, Typography } from "@mui/material";
 import Multiselect from "multiselect-react-dropdown";
 import { HeroContainer } from "../../../PlayGame";
-import { Col, Row } from "antd";
 
 export const CreateGroupConv = () => {
     const navigate = useNavigate();
@@ -44,7 +43,7 @@ export const CreateGroupConv = () => {
                 if (bool)
                     setUserId(data.userId)
                 allUsers.forEach((user: User) => {
-                    if (user.id === userId)
+                    if (user.id === userId && bool)
                         setChanUsers([user]);
                 })
             }
@@ -54,7 +53,7 @@ export const CreateGroupConv = () => {
         }
         getUserId();
         return () => {bool = false};
-    }, []);
+    }, [allUsers, userId]);
 
     const submit = async(event: SyntheticEvent) => {
         event.preventDefault();
