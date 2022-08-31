@@ -6,7 +6,7 @@
 /*   By: mbonnet <mbonnet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 15:50:20 by mbonnet           #+#    #+#             */
-/*   Updated: 2022/08/11 11:38:52 by mbonnet          ###   ########.fr       */
+/*   Updated: 2022/08/31 16:37:33 by mbonnet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,23 +229,23 @@ export const Pong = () => {
 			socket.emit('mouvWinner', {winner:2});
 	}
 
-	async function end(socket, data)
+	async function end(socket, data2)
 	{
 		let str;
 		ctx.fillStyle = "#000000";
-		if (data.userID === data.winner_id)
+		if (data.userId === data2.winner_id)
 			str = "Winner !"
-		else if (data.winner_id === 0)
+		else if (data2.winner_id === 0)
 			str = "  End  "
 		else
 			str = "looser !"
 		ctx.font = "15pt Calibri,Geneva,Arial";
 		ctx.fillText(str, myGame.canvasX/2 - 35 ,  myGame.canvasY/2 - 30);
 		ctx.font = "20pt Calibri,Geneva,Arial";
-		if (data.coter_winner === 1)
-			ctx.fillText(data.winner_point + " | " + data.looser_point , myGame.canvasX/2 - 30 ,  myGame.canvasY/2 + 30);
+		if (data2.coter_winner === 1)
+			ctx.fillText(data2.winner_point + " | " + data2.looser_point , myGame.canvasX/2 - 30 ,  myGame.canvasY/2 + 30);
 		else
-			ctx.fillText(data.looser_point + " | " + data.winner_point , myGame.canvasX/2 - 30,  myGame.canvasY/2 + 30);
+			ctx.fillText(data2.looser_point + " | " + data2.winner_point , myGame.canvasX/2 - 30,  myGame.canvasY/2 + 30);
 		socket.disconnect()
 	}
 	async function clean(){
