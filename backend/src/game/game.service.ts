@@ -2,6 +2,7 @@ import { Injectable, Req } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm'
 import { Games, Balls, Raquettes, Historique } from './game.entity';
+import { User } from './../user/user.entity';
 import { Server, Socket } from 'socket.io';
 import {ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import axios from "axios";
@@ -18,6 +19,7 @@ export class GameService {
     constructor(
         @InjectRepository(Games) private readonly GamesRepository: Repository<Games>,
         @InjectRepository(Balls) private readonly BallsRepository: Repository<Balls>,
+        @InjectRepository(User) private readonly UserRepository: Repository<User>,
         @InjectRepository(Raquettes) private readonly RaquettesRepository: Repository<Raquettes>,
         @InjectRepository(Historique) private readonly HistoriqueRepository: Repository<Historique>
     ) {}
@@ -81,7 +83,9 @@ export class GameService {
         const histTmp: Historique = new Historique();
         histTmp.coter_winner = data.coter_winner;
         histTmp.winner_id = data.winner_id;
+        histTmp.winner_name = data.winner_name;
         histTmp.looser_id = data.looser_id;
+        histTmp.looser_name = data.looser_name;
         histTmp.winner_point = data.winner_point;
         histTmp.looser_point = data.looser_point;
         histTmp.dificult = data.dificult;
@@ -149,6 +153,13 @@ export class GameService {
             id : id
         })
         return (raq);
+    }
+
+    async TakeUserById(id: number){
+        var res = await this.UserRepository.findOneBy({
+            id: id, 
+        })
+        return (res);
     }
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@//
@@ -258,9 +269,9 @@ export class GameService {
     @WebSocketServer()
 	server: Server;
 	handleConnection(client: Socket){
-		console.log("Socket connecter coter server!");
+		console.log("Socket connecter coter server : " + client.id);
 	}
-	handleDisConnection(client: Socket){
+	handleDisConnect(client: Socket){
 		console.log("Socket deconnecter coter server!");
 	}
 	@SubscribeMessage('Lancer de comunication')
@@ -302,6 +313,11 @@ export class GameService {
         client.on('disconnect', async (data) => {
             this.mouvWinner(0);
        })
+       client.on('user', async (data) => {
+            var user_win = await this.TakeUserById(data.id_win);
+            var user_loo = await this.TakeUserById(data.id_loo);
+            client.emit('user', {winner:user_win, looser:user_loo});
+        })
     }
     
     async searchGame(data, client){

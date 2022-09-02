@@ -6,13 +6,16 @@
 /*   By: mbonnet <mbonnet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 15:50:20 by mbonnet           #+#    #+#             */
-/*   Updated: 2022/09/02 09:52:33 by mbonnet          ###   ########.fr       */
+/*   Updated: 2022/09/02 17:45:59 by mbonnet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import io from "socket.io-client";
+import { useEffect } from 'react';
+
+
 
 type PongProps = {
     userId: number,
@@ -67,8 +70,9 @@ export const Pong = () => {
 	}
 	
 	class Historique {
-		constructor(){
+		constructor(winner_name, looser_name){
 			this.winner_id = myGame.winner;
+			this.winner_name = winner_name;
 			if (this.winner_id !== myRaq1.user_id)
 			{
 				this.coter_winner = 2;
@@ -84,10 +88,13 @@ export const Pong = () => {
 				this.looser_point = myGame.point2;
 			}
 			this.dificult = myGame.dificult;
+			this.looser_name = looser_name;
 		}
 		coter_winner = -1;
 		winner_id = -1;
+		winner_name = "";
 		looser_id = -1;
+		looser_name = "";
 		winner_point = -1;
 		looser_point = -1;
 		dificult = 1;  
@@ -217,8 +224,16 @@ export const Pong = () => {
 
 	async function MesEnd(socket, data)
 	{
-		var res = new Historique();	
-		socket.emit('end', res);
+		var loo;
+		if (myGame.winner !== myRaq1.user_id)
+			loo = myRaq1.user_id;
+		else
+			loo = myRaq2.user_id;
+		socket.emit('user', {id_win: myGame.winner, id_loo: loo});
+		socket.on('user',(data2) => {
+			var res = new Historique(data2.winner.username,data2.looser.username);	
+			socket.emit('end', res);
+		})
 	}
 
 	function checkEnd(socket)
@@ -432,8 +447,9 @@ export const Pong = () => {
 		  	setTimeout(forEmitUpdateWithTimeout, 5);
 		});
 	}
-	run();
-	
+	useEffect(() => {
+		run();
+	}, []);
 	return (
 			<div></div>
 	);

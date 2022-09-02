@@ -36,8 +36,12 @@ export class Historique {
 	coter_winner: number;
 	@Column({ nullable: true })
 	winner_id: number;
+    @Column({ nullable: true })
+	winner_name: string;
 	@Column({ nullable: true })
 	looser_id: number;
+    @Column({ nullable: true })
+	looser_name: string;
 	@Column({ nullable: true })
   	winner_point: number;
 	@Column({ nullable: true })

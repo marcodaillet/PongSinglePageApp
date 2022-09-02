@@ -14,8 +14,16 @@ import { ChatGatewayModule } from './chat/chat.gateway.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
+      // type: "postgres",
+      // url: process.env.DATABASE_URL,
+      // autoLoadEntities: true,
+      // synchronize: true,
       type: "postgres",
-      url: process.env.DATABASE_URL,
+      port: 5432,
+      host: "127.0.0.1",
+      username: "postgres",
+      password: "root",
+      database: "transandance",
       autoLoadEntities: true,
       synchronize: true,
     }),

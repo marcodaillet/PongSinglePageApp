@@ -52,7 +52,6 @@ export const Game = () =>
     const hardWaiting = () => {
         return navigate("/game/playing", {state: { userId: userId, type: 3, gameId: -2, invitationId: -1, canvasX: 800 }});
     }
-
     return (
         <HeroContainer>
             {/* <CustomVideo/> */}
