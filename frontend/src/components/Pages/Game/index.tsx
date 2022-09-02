@@ -6,7 +6,7 @@
 /*   By: mbonnet <mbonnet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 15:50:20 by mbonnet           #+#    #+#             */
-/*   Updated: 2022/08/31 16:37:33 by mbonnet          ###   ########.fr       */
+/*   Updated: 2022/09/02 09:52:33 by mbonnet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,6 +247,8 @@ export const Pong = () => {
 		else
 			ctx.fillText(data2.looser_point + " | " + data2.winner_point , myGame.canvasX/2 - 30,  myGame.canvasY/2 + 30);
 		socket.disconnect()
+		await axios.post('user/sendGameInvite', {userID: -1, gameID:-1})
+		await axios.post('user/sendUserInvite', {userID: -1, userInviteID:-1})
 	}
 	async function clean(){
 		ctx.clearRect(0,0, myGame.canvasX, myGame.canvasY);
