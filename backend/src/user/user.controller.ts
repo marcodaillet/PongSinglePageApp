@@ -28,16 +28,13 @@ export class UserController {
     @UseGuards(verifyUser)
     @Get("all")
     async all(): Promise<User[]> {
-        console.log(await this.userService.all());
         return await this.userService.all();
     }
 
     @UseGuards(verifyUser)
     @Get("findUserById:id")
     async findUserById(@Param('id') id) {
-        console.log(id);
-        console.log(await this.userService.findOne(id));
-        return ;
+        return await this.userService.findOne(id);
     }
 
     @UseGuards(verifyUser)

@@ -6,7 +6,7 @@
 /*   By: mbonnet <mbonnet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 15:50:20 by mbonnet           #+#    #+#             */
-/*   Updated: 2022/09/02 17:45:59 by mbonnet          ###   ########.fr       */
+/*   Updated: 2022/09/03 09:38:21 by mbonnet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,7 @@ export const Pong = () => {
 	{
 		if (data.userId === myRaq1.user_id && ((nb > 0 && myRaq1.p_y + myRaq1.t_y <= myGame.canvasY) || (nb < 0 && myRaq1.p_y >= 0)))
 			socket.emit('mouvRaq', {witchRaq:1, p_y:nb});
-		else if (data.userId === myRaq2.user_id && ((nb > 0 && myRaq2.p_y <= myGame.canvasY) || (nb < 0 && myRaq2.p_y >= 0)))
+		else if (data.userId === myRaq2.user_id && ((nb > 0 && myRaq2.p_y + myRaq1.t_y <= myGame.canvasY) || (nb < 0 && myRaq2.p_y >= 0)))
 			socket.emit('mouvRaq', {witchRaq:2, p_y:nb});
 	}
 

@@ -345,7 +345,7 @@ export class GameService {
             if (tmpGame === null  || raqCheck.user_id === data.userId)
                 tmpGame = await this.insertGame(data.canvasX, data.type, false,-1);
         }
-        if (tmpGame.raq1 === -1)
+        if (data.type != -1 && tmpGame.raq1 === -1)
         {
             this.myBall = await this.insertBall(tmpGame.canvasX/2, tmpGame.canvasY/2); 
             await this.mouvGameBallId(tmpGame, this.myBall.id);
@@ -353,7 +353,7 @@ export class GameService {
             await this.mouvGameRaq1(tmpGame,raquette.id);
             this.myRaq1 = raquette;
         }
-        else if (tmpGame.raq2 === -1)
+        else if (data.type != -1 && tmpGame.raq2 === -1)
         {
             raquette = await this.insertRaquette(tmpGame.canvasX - (tmpGame.blocksize * 2),tmpGame.canvasY/2 - (tmpGame.blocksize * (5 - tmpGame.dificult))/2, tmpGame.blocksize * (5 - tmpGame.dificult), data.userId ,false);
             await this.mouvGameRaq2(tmpGame,raquette.id);
