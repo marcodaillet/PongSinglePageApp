@@ -44,14 +44,15 @@ export const Game = () =>
 
     const navigate = useNavigate();
     const easyWaiting = async () => {
-        return navigate("/game/playing", {state: { userId: userId, type: 1, gameId: -2, invitationId: -1, canvasX: 800 }});
+        return navigate("/game/playing", {state: { userId: userId, type: 1, gameId: -2, invitationId: -1, canvasX: 600 }});
     }
     const normalWaiting = () => {
-        return navigate("/game/playing", {state: { userId: userId, type: 2, gameId: -2, invitationId: -1, canvasX: 800 }});
+        return navigate("/game/playing", {state: { userId: userId, type: 2, gameId: -2, invitationId: -1, canvasX: 600 }});
     }
     const hardWaiting = () => {
-        return navigate("/game/playing", {state: { userId: userId, type: 3, gameId: -2, invitationId: -1, canvasX: 800 }});
+        return navigate("/game/playing", {state: { userId: userId, type: 3, gameId: -2, invitationId: -1, canvasX: 600 }});
     }
+    axios.post('/game/checkEnd', {id:userId})
     return (
         <HeroContainer>
             {/* <CustomVideo/> */}

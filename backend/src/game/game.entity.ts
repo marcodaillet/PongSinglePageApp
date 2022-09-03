@@ -24,6 +24,10 @@ export class Balls {
     p_x?:number;
     @Column({ nullable: true })
     p_y?:number;
+    @Column({ nullable: true })
+    m_x?:number;
+    @Column({ nullable: true })
+    m_y?:number;
 	@Column({ nullable: true })
     connect?:boolean;
 }

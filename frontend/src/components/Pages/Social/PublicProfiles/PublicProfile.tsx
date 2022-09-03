@@ -83,7 +83,7 @@ export const PublicProfile = (props: any) => {
 
     const sendInvite = async (e: SyntheticEvent, id: number) => {
         e.preventDefault();
-        return navigate("/game/playing", {state: { userId: user.id, type: 1, gameId: -1, invitationId: publicUser.id, canvasX: 800 }});
+        return navigate("/game/playing", {state: { userId: user.id, type: 1, gameId: -1, invitationId: publicUser.id, canvasX: 600 }});
     }
 
     const addFriend = async (e: SyntheticEvent, userId: number, friendId: number) => {

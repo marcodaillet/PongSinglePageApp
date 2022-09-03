@@ -85,7 +85,7 @@ export const Profile = () => {
 
     const acceptInvite = async (e: SyntheticEvent) => {
         e.preventDefault();
-        return navigate("/game/playing", {state: { userId: user.id, type: 1, gameId: user.privateGame, invitationId: -1, canvasX: 800 }});
+        return navigate("/game/playing", {state: { userId: user.id, type: 1, gameId: user.privateGame, invitationId: -1, canvasX: 600 }});
     }
 
     const removeFriend = async (e: SyntheticEvent, userId: number, friendId: number) => {
@@ -104,7 +104,7 @@ export const Profile = () => {
         e.preventDefault();
         try {
             const info = await axios.post("game/spectateFriend", {userID: userId, friendID: friendId})
-            return navigate("/game/playing", {state: { userId: user.id, type: -1, gameId: info.data.gameId, invitationId: -1, canvasX: 800}})
+            return navigate("/game/playing", {state: { userId: user.id, type: -1, gameId: info.data.gameId, invitationId: -1, canvasX: 600}})
         }
         catch (error) {
             console.log("error occurred while trying to spectate this friend");

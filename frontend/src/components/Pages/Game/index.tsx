@@ -6,7 +6,7 @@
 /*   By: mbonnet <mbonnet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 15:50:20 by mbonnet           #+#    #+#             */
-/*   Updated: 2022/09/03 09:38:21 by mbonnet          ###   ########.fr       */
+/*   Updated: 2022/09/03 12:13:57 by mbonnet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ export const Pong = () => {
 					calY();
 				return (1);
 			}
-			return (0);
+		return (0);
 	}
 	
 	function mouvBall(socket)
@@ -168,10 +168,10 @@ export const Pong = () => {
 		{
 			return ;
 		}
+		if (myRaq1.user_id !== data.userId)
+			return ;
 		if (checkColision() === 0)
 		{
-			if (myRaq1.user_id !== data.userId)
-				return ;
 			if (((myBall.p_x <= 0 && myBall.m_x < 0) || (myBall.p_x >= myGame.canvasX && myBall.m_x > 0)))
 			{
 				if (myBall.p_x <= 0 && myBall.m_x < 0)
@@ -183,7 +183,6 @@ export const Pong = () => {
 			if ((myBall.p_y <= 0 && myBall.m_y < 0) || (myBall.p_y >= myGame.canvasY && myBall.m_y > 0))
 				calX();
 		}
-		
 		socket.emit('mouvBall', { newX:myBall.m_x + myBall.p_x, newY:myBall.m_y + myBall.p_y});
 	}
 	
@@ -231,7 +230,10 @@ export const Pong = () => {
 			loo = myRaq2.user_id;
 		socket.emit('user', {id_win: myGame.winner, id_loo: loo});
 		socket.on('user',(data2) => {
-			var res = new Historique(data2.winner.username,data2.looser.username);	
+			if (data2.winner != null && data2.looser != null)
+				var res = new Historique(data2.winner.username,data2.looser.username);	
+			else 
+				var res = new Historique("","");	
 			socket.emit('end', res);
 		})
 	}

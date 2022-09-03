@@ -17,7 +17,7 @@ import axios from "axios";
 @Injectable()
 export class GameService {
     constructor(
-        @InjectRepository(Games) private readonly GamesRepository: Repository<Games>,
+        @InjectRepository(Games) readonly GamesRepository: Repository<Games>,
         @InjectRepository(Balls) private readonly BallsRepository: Repository<Balls>,
         @InjectRepository(User) private readonly UserRepository: Repository<User>,
         @InjectRepository(Raquettes) private readonly RaquettesRepository: Repository<Raquettes>,
@@ -71,10 +71,12 @@ export class GameService {
 
 //@@@@@@@@@@@@@@@@@@@@@ insert ball @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@//
 
-    async insertBall(p_x : number, p_y : number){
+    async insertBall(p_x : number, p_y : number, m_x : number, m_y : number){
         const ballTmp: Balls = new Balls();
         ballTmp.p_x = p_x;
         ballTmp.p_y = p_y;
+        ballTmp.m_x = m_x;
+        ballTmp.m_y = m_y;
         await this.BallsRepository.save(ballTmp);
         return (ballTmp);
     }
@@ -109,6 +111,23 @@ export class GameService {
         let Games = await this.GamesRepository.find()
         return (Games);
     }
+
+    async TakeGameByRaq(id){
+        let raq;
+        let Games = await this.GamesRepository.find();
+        for (let i = 0; Games[i]; i++)
+        {
+            raq = await this.TakeRaquetteById(Games[i].raq1);
+            if (raq != null && raq.user_id != id)
+                raq = await this.TakeRaquetteById(Games[i].raq2);
+            if (raq != null && raq.user_id === id)
+            {
+                return (Games[i])
+            }
+        }
+        return ;
+    }
+
     async TakeGameByRaq1(dif){
         let Game = await this.GamesRepository.findOneBy({
             raq1 : -1,
@@ -293,7 +312,7 @@ export class GameService {
             this.myRaq1 = await this.TakeRaquetteById(this.myGame.raq1);
             this.myRaq2 = await this.TakeRaquetteById(this.myGame.raq2);
             this.myBall = await this.TakeBallById(this.myGame.ball_id);
-		 	client.emit('run', {myGame:this.myGame, myRaq1:this.myRaq1, myRaq2:this.myRaq2, myBall:this.myBall});
+            client.emit('run', {myGame:this.myGame, myRaq1:this.myRaq1, myRaq2:this.myRaq2, myBall:this.myBall});
 	    })
 		client.on('mouvBall', async (data) => {
 		 	this.mouvBall(data.newX, data.newY);
@@ -325,9 +344,7 @@ export class GameService {
         let raquette;
         let raqCheck;
         if (data.gameId > 0)
-        {
             tmpGame = await this.TakeGameById(data.gameId);
-        }
         else if (data.gameId === -1)
         {
             tmpGame = await this.insertGame(data.canvasX, data.type, true, data.invitationId);
@@ -335,19 +352,23 @@ export class GameService {
         }
         else
         {
-            tmpGame = await this.TakeGameByRaq1(data.type);
-            if 	(tmpGame === null || tmpGame.raq1 == -1)
+            tmpGame = await this.TakeGameByRaq(data.userId);
+            if (tmpGame === undefined)
             {
-                tmpGame = await this.TakeGameByRaq2(data.type);
-                if (tmpGame != null)
-                    raqCheck = await this.TakeRaquetteById(tmpGame.raq1);
-            }	
-            if (tmpGame === null  || raqCheck.user_id === data.userId)
-                tmpGame = await this.insertGame(data.canvasX, data.type, false,-1);
+                tmpGame = await this.TakeGameByRaq1(data.type);
+                if 	(tmpGame === null || tmpGame.raq1 == -1)
+                {
+                    tmpGame = await this.TakeGameByRaq2(data.type);
+                    if (tmpGame != null)
+                        raqCheck = await this.TakeRaquetteById(tmpGame.raq1);
+                }	
+                if (tmpGame === null  || raqCheck.user_id === data.userId)
+                    tmpGame = await this.insertGame(data.canvasX, data.type, false,-1);
+            }
         }
         if (data.type != -1 && tmpGame.raq1 === -1)
         {
-            this.myBall = await this.insertBall(tmpGame.canvasX/2, tmpGame.canvasY/2); 
+            this.myBall = await this.insertBall(tmpGame.canvasX/2, tmpGame.canvasY/2, 1, 1); 
             await this.mouvGameBallId(tmpGame, this.myBall.id);
             raquette = await this.insertRaquette(tmpGame.blocksize ,tmpGame.canvasY/2 - (tmpGame.blocksize * (5 - tmpGame.dificult))/2, tmpGame.blocksize * (5 - tmpGame.dificult), data.userId ,false);
             await this.mouvGameRaq1(tmpGame,raquette.id);

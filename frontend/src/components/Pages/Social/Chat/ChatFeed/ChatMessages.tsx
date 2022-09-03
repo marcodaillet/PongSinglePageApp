@@ -57,7 +57,7 @@ export const UserBuble = (props: UserBubleProps) => {
 
     const sendInvite = async (e: SyntheticEvent, id: number) => {
         e.preventDefault();
-        return navigate("/game/playing", {state: { userId: props.userId, type: 1, gameId: -1, invitationId: props.senderId, canvasX: 800 }});
+        return navigate("/game/playing", {state: { userId: props.userId, type: 1, gameId: -1, invitationId: props.senderId, canvasX: 600 }});
     }
 
     const blockUser = async (e: SyntheticEvent, id: number) => {
