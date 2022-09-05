@@ -6,12 +6,12 @@
 /*   By: mbonnet <mbonnet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 15:50:20 by mbonnet           #+#    #+#             */
-/*   Updated: 2022/09/03 12:13:57 by mbonnet          ###   ########.fr       */
+/*   Updated: 2022/09/05 16:28:04 by mbonnet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import { useEffect } from 'react';
 
@@ -233,7 +233,7 @@ export const Pong = () => {
 			if (data2.winner != null && data2.looser != null)
 				var res = new Historique(data2.winner.username,data2.looser.username);	
 			else 
-				var res = new Historique("","");	
+				var res = new Historique("","");
 			socket.emit('end', res);
 		})
 	}
@@ -393,6 +393,7 @@ export const Pong = () => {
 		socket.emit('run', myGame)
 		socket.on('messageEnd', async (data)=> {
 			end(socket, data);
+			await axios.post('user/setOnStatus')
 		})
 
 		socket.on('run', async (data)=> {
@@ -402,7 +403,9 @@ export const Pong = () => {
 			await checkEnd(socket);
 			await update(data);
 			if (myGame.winner === -1)
+			{
 				await setTimeout(forEmitRunWithTimeout, 1);
+			}
 			else
 			{
 				await MesEnd(socket, mydata);
@@ -420,13 +423,14 @@ export const Pong = () => {
 	 	canvas.style.border = "1px solid";
 	 	ctx = canvas.getContext('2d');
 	 	parent.appendChild(canvas);
+		await axios.post('user/setInStatus');
 	}
 	
 	async function socketConnect()
 	{
 		return (io('http://localhost:3000'));
 	}
-	
+	const navigate = useNavigate();
 	async function run(){
 		await axios.get('game');
 		socket = await socketConnect();
@@ -441,6 +445,7 @@ export const Pong = () => {
 		socket.on('update', (data)=> {
 		 	update(data);
 		 	beforeStartGame();
+			 console.log("saliut");
 		 	if (myGame.raq2 !== -1)
 		  	{
 		  		start(data);
@@ -450,7 +455,7 @@ export const Pong = () => {
 		});
 	}
 	useEffect(() => {
-		run();
+			run();
 	}, []);
 	return (
 			<div></div>

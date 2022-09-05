@@ -36,6 +36,8 @@ export const Layout = (props: LayoutProps) => {
         const authorize = async () => {
             try {
                 const user = await axios.get('userData');
+                axios.post('/game/checkEnd', {id:user.data.id})
+                axios.post('user/setOnStatus')
                 if (user.data.status === 'OFFLINE')
                     setUnauth(true);
             }

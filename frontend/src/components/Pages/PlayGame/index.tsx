@@ -52,7 +52,6 @@ export const Game = () =>
     const hardWaiting = () => {
         return navigate("/game/playing", {state: { userId: userId, type: 3, gameId: -2, invitationId: -1, canvasX: 600 }});
     }
-    axios.post('/game/checkEnd', {id:userId})
     return (
         <HeroContainer>
             {/* <CustomVideo/> */}

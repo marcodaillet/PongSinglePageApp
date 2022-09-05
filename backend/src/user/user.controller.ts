@@ -58,6 +58,21 @@ export class UserController {
     }
 
     @UseGuards(verifyUser)
+    @Post("setInStatus")
+    async setInStatus(@Req() request: Request) {
+        const user = await this.authenticationService.clientID(request);
+        await this.userService.setInGame(user);
+    }
+
+
+    @UseGuards(verifyUser)
+    @Post("setOnStatus")
+    async setOnStatus(@Req() request: Request) {
+        const user = await this.authenticationService.clientID(request);
+        await this.userService.setOnline(user);
+    }
+
+    @UseGuards(verifyUser)
     @Get("getUserId")
     async getUserId(@Req() request: Request) {
         const id = await this.authenticationService.clientID(request);

@@ -28,6 +28,7 @@ export class GameService {
     myRaq2;
     myBall;
 
+    //myGames: Games[];
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@//
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@//
     //@@@@@@@@@@@@@@@@@@@@@ deb des insert @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@//
@@ -117,9 +118,15 @@ export class GameService {
         let Games = await this.GamesRepository.find();
         for (let i = 0; Games[i]; i++)
         {
+            //console.log("les games observer : ", Games[i]);
+            //console.log("id  rechercher : ", id);
             raq = await this.TakeRaquetteById(Games[i].raq1);
+            //console.log("raq1", raq);
             if (raq != null && raq.user_id != id)
+            {
                 raq = await this.TakeRaquetteById(Games[i].raq2);
+                //console.log("raq2", raq);
+            }
             if (raq != null && raq.user_id === id)
             {
                 return (Games[i])
@@ -273,7 +280,7 @@ export class GameService {
     {
         let id_game = await this.TakeGameById(game.id);
         let id_raq1 = await this.TakeRaquetteById(game.raq1);
-        let id_raq2 = await this.TakeRaquetteById(game.raq2);	;
+        let id_raq2 = await this.TakeRaquetteById(game.raq2);
         let id_ball = await this.TakeBallById(game.ball_id);
         
         if (id_game)
@@ -288,55 +295,57 @@ export class GameService {
     @WebSocketServer()
 	server: Server;
 	handleConnection(client: Socket){
-		console.log("Socket connecter coter server : " + client.id);
 	}
 	handleDisConnect(client: Socket){
-		console.log("Socket deconnecter coter server!");
 	}
 	@SubscribeMessage('Lancer de comunication')
 	async handleEvent(@MessageBody() data, @ConnectedSocket() client: Socket)
 	{
-        await this.CleanGame(client, data);
-        await this.searchGame(data, client);
-        client.emit('initGame', {canvas:this.myGame.canvasX})
-        client.emit('update', {myGame:this.myGame, myRaq1:this.myRaq1, myRaq2:this.myRaq2})
-        client.on('update', async () => {
-            this.myGame = await this.TakeGameById(this.myGame.id);
-            this.myRaq1 = await this.TakeRaquetteById(this.myGame.raq1);
-            this.myRaq2 = await this.TakeRaquetteById(this.myGame.raq2);
-            this.myBall = await this.TakeBallById(this.myGame.ball_id);
-            client.emit('update', {myGame:this.myGame, myRaq1:this.myRaq1, myRaq2:this.myRaq2, myBall:this.myBall})
-        })
-        client.on('run', async () => {
-            this.myGame = await this.TakeGameById(this.myGame.id);
-            this.myRaq1 = await this.TakeRaquetteById(this.myGame.raq1);
-            this.myRaq2 = await this.TakeRaquetteById(this.myGame.raq2);
-            this.myBall = await this.TakeBallById(this.myGame.ball_id);
-            client.emit('run', {myGame:this.myGame, myRaq1:this.myRaq1, myRaq2:this.myRaq2, myBall:this.myBall});
-	    })
-		client.on('mouvBall', async (data) => {
-		 	this.mouvBall(data.newX, data.newY);
-		})
-		client.on('mouvPoint', async (data) => {
-		 	this.mouvPoint(data.point1, data.point2);
-		})
-		client.on('mouvWinner', async (data) => {
-		 	this.mouvWinner(data.winner);
-		})
-		client.on('mouvRaq', async (data) => {
-		 	this.mouvRaq(data);
-		})
-		client.on('end', async (data) => {
-		 	this.end(client, data);
-		})
-        client.on('disconnect', async (data) => {
-            this.mouvWinner(0);
-       })
-       client.on('user', async (data) => {
-            var user_win = await this.TakeUserById(data.id_win);
-            var user_loo = await this.TakeUserById(data.id_loo);
-            client.emit('user', {winner:user_win, looser:user_loo});
-        })
+                await this.CleanGame(client, data);
+                await this.searchGame(data, client);
+                client.emit('initGame', {canvas:this.myGame.canvasX})
+                client.emit('update', {myGame:this.myGame, myRaq1:this.myRaq1, myRaq2:this.myRaq2})
+                client.on('update', async () => {
+                    if ((data.type === -1 && this.myGame && this.myRaq1 && this.myRaq2 && this.myBall) || data.type != -1)
+                    {
+                        console.log("ici : ",this.myGame.id);
+                        this.myGame = await this.TakeGameById(this.myGame.id);
+                        this.myRaq1 = await this.TakeRaquetteById(this.myGame.raq1);
+                        this.myRaq2 = await this.TakeRaquetteById(this.myGame.raq2);
+                        this.myBall = await this.TakeBallById(this.myGame.ball_id);
+                    }
+                    client.emit('update', {myGame:this.myGame, myRaq1:this.myRaq1, myRaq2:this.myRaq2, myBall:this.myBall})
+                })
+                client.on('run', async () => {
+                    if ((data.type === -1 && this.myGame && this.myRaq1 && this.myRaq2 && this.myBall) || data.type != -1)
+                    {
+                        this.myGame = await this.TakeGameById(this.myGame.id);
+                        this.myRaq1 = await this.TakeRaquetteById(this.myGame.raq1);
+                        this.myRaq2 = await this.TakeRaquetteById(this.myGame.raq2);
+                        this.myBall = await this.TakeBallById(this.myGame.ball_id);
+                    }
+                    client.emit('run', {myGame:this.myGame, myRaq1:this.myRaq1, myRaq2:this.myRaq2, myBall:this.myBall});
+                })
+                client.on('mouvBall', async (data) => {
+                    this.mouvBall(data.newX, data.newY);
+                })
+                client.on('mouvPoint', async (data) => {
+                    this.mouvPoint(data.point1, data.point2);
+                })
+                client.on('mouvWinner', async (data) => {
+                    this.mouvWinner(data.winner);
+                })
+                client.on('mouvRaq', async (data) => {
+                    this.mouvRaq(data);
+                })
+                client.on('end', async (data) => {
+                    this.end(client, data);
+                })
+                client.on('user', async (data) => {
+                    var user_win = await this.TakeUserById(data.id_win);
+                    var user_loo = await this.TakeUserById(data.id_loo);
+                    client.emit('user', {winner:user_win, looser:user_loo});
+                })
     }
     
     async searchGame(data, client){
@@ -381,6 +390,7 @@ export class GameService {
             this.myRaq2 = raquette;
         }
         this.myGame = tmpGame;
+        
     }
 
     async mouvBall(newX, newY)
