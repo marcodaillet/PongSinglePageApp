@@ -36,7 +36,6 @@ export class GameController {
                 await this.gameService.delateGame(tmp);
                 return ;
             }
-
             tmp.winner = 0;
             this.gameService.GamesRepository.save(tmp);
         }

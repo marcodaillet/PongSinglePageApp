@@ -48,6 +48,12 @@ export class AuthController {
         const clientID = await this.authenticationService.clientID(request);
         return await this.userService.findOne(clientID);
     }
+    @UseGuards(verifyUser)
+    @Get('userId')
+    async getUserId(@Req() request: Request, @Body() data) {
+        const clientID = await this.authenticationService.clientID(request);
+        return clientID;
+    }
     
     @UseGuards(verifyUser)
     @Post('setOnline')

@@ -6,7 +6,7 @@
 /*   By: mbonnet <mbonnet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 15:50:20 by mbonnet           #+#    #+#             */
-/*   Updated: 2022/09/05 16:28:04 by mbonnet          ###   ########.fr       */
+/*   Updated: 2022/09/07 12:04:48 by mbonnet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,25 +165,26 @@ export const Pong = () => {
 	function mouvBall(socket)
 	{
 		if (myBall.id === -1)
-		{
-			return ;
-		}
+		return ;
+		console.log("1");
 		if (myRaq1.user_id !== data.userId)
-			return ;
+		return ;
+		console.log("2");
 		if (checkColision() === 0)
 		{
 			if (((myBall.p_x <= 0 && myBall.m_x < 0) || (myBall.p_x >= myGame.canvasX && myBall.m_x > 0)))
 			{
 				if (myBall.p_x <= 0 && myBall.m_x < 0)
-					socket.emit('mouvPoint', {point1:myGame.point1, point2:myGame.point2 + 1});
+				socket.emit('mouvPoint', {point1:myGame.point1, point2:myGame.point2 + 1, myGame:myGame});
 				else if (myBall.p_x >= myGame.canvasX && myBall.m_x > 0)
-					socket.emit('mouvPoint', {point1:myGame.point1 + 1, point2:myGame.point2});
+				socket.emit('mouvPoint', {point1:myGame.point1 + 1, point2:myGame.point2, myGame:myGame});
 				calY();
 			}
 			if ((myBall.p_y <= 0 && myBall.m_y < 0) || (myBall.p_y >= myGame.canvasY && myBall.m_y > 0))
-				calX();
+			calX();
 		}
-		socket.emit('mouvBall', { newX:myBall.m_x + myBall.p_x, newY:myBall.m_y + myBall.p_y});
+		console.log(myBall);
+		socket.emit('mouvBall', { newX:myBall.m_x + myBall.p_x, newY:myBall.m_y + myBall.p_y, myGame});
 	}
 	
 	function mouvRaq(socket, nb)
@@ -234,7 +235,7 @@ export const Pong = () => {
 				var res = new Historique(data2.winner.username,data2.looser.username);	
 			else 
 				var res = new Historique("","");
-			socket.emit('end', res);
+			socket.emit('end', {hist:res, myGame:myGame});
 		})
 	}
 
@@ -379,38 +380,8 @@ export const Pong = () => {
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@// 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@// 
 	
-	function forEmitRunWithTimeout(){
-		socket.emit('run', myGame)
-	}
-	
 	function forEmitUpdateWithTimeout(){
-		socket.emit('update', myGame)
-	}
-	
-	function start(mydata)
-	{
-		clean();
-		socket.emit('run', myGame)
-		socket.on('messageEnd', async (data)=> {
-			end(socket, data);
-			await axios.post('user/setOnStatus')
-		})
-
-		socket.on('run', async (data)=> {
-			await clean();
-			await draws();
-			await mouvs(socket);
-			await checkEnd(socket);
-			await update(data);
-			if (myGame.winner === -1)
-			{
-				await setTimeout(forEmitRunWithTimeout, 1);
-			}
-			else
-			{
-				await MesEnd(socket, mydata);
-			}
-		})
+		socket.emit('update', {myGame:myGame})
 	}
 	
 	async function init(canvasX)
@@ -431,6 +402,7 @@ export const Pong = () => {
 		return (io('http://localhost:3000'));
 	}
 	const navigate = useNavigate();
+
 	async function run(){
 		await axios.get('game');
 		socket = await socketConnect();
@@ -442,16 +414,31 @@ export const Pong = () => {
 	    socket.on('initGame', async (data) => {
 			await init(data.canvas);
 		});
+		socket.on('messageEnd', async (data)=> {
+			end(socket, data);
+			await axios.post('user/setOnStatus')
+		})
 		socket.on('update', (data)=> {
-		 	update(data);
-		 	beforeStartGame();
-			 console.log("saliut");
-		 	if (myGame.raq2 !== -1)
-		  	{
-		  		start(data);
-		  		return ;
-		  	}
-		  	setTimeout(forEmitUpdateWithTimeout, 5);
+			update(data);
+			if (myGame.raq2 === -1)
+			{
+				console.log("on pass en before !");
+				beforeStartGame();
+			}
+		   else if (myGame.winner != -1)
+		   {
+			   MesEnd(socket, myGame);
+		   }
+		   else
+		   {
+				console.log("on pass en durring");
+			   clean();
+			   draws();
+			   mouvs(socket);
+			   checkEnd(socket);
+		   }
+		    console.log("ici : ",myGame);
+		  	setTimeout(forEmitUpdateWithTimeout, 1);
 		});
 	}
 	useEffect(() => {
