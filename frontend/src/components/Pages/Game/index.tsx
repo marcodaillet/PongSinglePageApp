@@ -6,7 +6,7 @@
 /*   By: mbonnet <mbonnet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 15:50:20 by mbonnet           #+#    #+#             */
-/*   Updated: 2022/09/07 12:04:48 by mbonnet          ###   ########.fr       */
+/*   Updated: 2022/09/07 12:18:44 by mbonnet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,10 +166,8 @@ export const Pong = () => {
 	{
 		if (myBall.id === -1)
 		return ;
-		console.log("1");
 		if (myRaq1.user_id !== data.userId)
 		return ;
-		console.log("2");
 		if (checkColision() === 0)
 		{
 			if (((myBall.p_x <= 0 && myBall.m_x < 0) || (myBall.p_x >= myGame.canvasX && myBall.m_x > 0)))
@@ -183,16 +181,15 @@ export const Pong = () => {
 			if ((myBall.p_y <= 0 && myBall.m_y < 0) || (myBall.p_y >= myGame.canvasY && myBall.m_y > 0))
 			calX();
 		}
-		console.log(myBall);
 		socket.emit('mouvBall', { newX:myBall.m_x + myBall.p_x, newY:myBall.m_y + myBall.p_y, myGame});
 	}
 	
 	function mouvRaq(socket, nb)
 	{
 		if (data.userId === myRaq1.user_id && ((nb > 0 && myRaq1.p_y + myRaq1.t_y <= myGame.canvasY) || (nb < 0 && myRaq1.p_y >= 0)))
-			socket.emit('mouvRaq', {witchRaq:1, p_y:nb});
+			socket.emit('mouvRaq', {witchRaq:1, p_y:nb, myGame:myGame});
 		else if (data.userId === myRaq2.user_id && ((nb > 0 && myRaq2.p_y + myRaq1.t_y <= myGame.canvasY) || (nb < 0 && myRaq2.p_y >= 0)))
-			socket.emit('mouvRaq', {witchRaq:2, p_y:nb});
+			socket.emit('mouvRaq', {witchRaq:2, p_y:nb, myGame:myGame});
 	}
 
 	document.onkeydown = function mouvRaquette(e)
@@ -242,9 +239,9 @@ export const Pong = () => {
 	function checkEnd(socket)
 	{	
 		if (myGame.point1 === 5)
-			socket.emit('mouvWinner', {winner:1});
+			socket.emit('mouvWinner', {winner:1, myGame:myGame});
 		else if (myGame.point2 === 5)
-			socket.emit('mouvWinner', {winner:2});
+			socket.emit('mouvWinner', {winner:2, myGame:myGame});
 	}
 
 	async function end(socket, data2)
@@ -421,24 +418,17 @@ export const Pong = () => {
 		socket.on('update', (data)=> {
 			update(data);
 			if (myGame.raq2 === -1)
-			{
-				console.log("on pass en before !");
 				beforeStartGame();
-			}
 		   else if (myGame.winner != -1)
-		   {
 			   MesEnd(socket, myGame);
-		   }
 		   else
 		   {
-				console.log("on pass en durring");
 			   clean();
 			   draws();
 			   mouvs(socket);
 			   checkEnd(socket);
 		   }
-		    console.log("ici : ",myGame);
-		  	setTimeout(forEmitUpdateWithTimeout, 1);
+		  	setTimeout(forEmitUpdateWithTimeout, 2);
 		});
 	}
 	useEffect(() => {

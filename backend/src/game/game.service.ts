@@ -317,7 +317,7 @@ export class GameService {
                     this.mouvPoint(data.point1, data.point2, data.myGame);
                 })
                 client.on('mouvWinner', async (data) => {
-                    this.mouvWinner(data.winner);
+                    this.mouvWinner(data.winner, data.myGame);
                 })
                 client.on('mouvRaq', async (data) => {
                     this.mouvRaq(data);
@@ -333,13 +333,13 @@ export class GameService {
     async searchGame(data, client){
         let tmpGame;
         let Games;
-        // if (data.gameId > 0)
-        //     tmpGame = await this.TakeGameById(data.gameId);
-        // else if (data.gameId === -1)
-        // {
-        //     tmpGame = await this.insertGame(data.canvasX, data.type, true, data.invitationId);
-        //     client.emit('invitation', {userID: data.invitationId, gameID:tmpGame.id, userInviteID:data.userId});
-        // }
+        if (data.gameId > 0)
+            tmpGame = await this.TakeGameById(data.gameId);
+        else if (data.gameId === -1)
+        {
+            tmpGame = await this.insertGame(data.canvasX, data.type, true, data.invitationId);
+            client.emit('invitation', {userID: data.invitationId, gameID:tmpGame.id, userInviteID:data.userId});
+        }
         if (data.gameId === -2)
         {
             Games = await this.TakeGame();
@@ -427,14 +427,14 @@ export class GameService {
         await this.mouvGamePoint2ById(myGame, point2);
     }
 
-    async mouvWinner(winner)
+    async mouvWinner(winner, myGame)
     {
         if (winner === 1)
-            await this.mouvGameWinnerById(this.myGame, this.myRaq1.user_id);
+            await this.mouvGameWinnerById(myGame, this.myRaq1.user_id);
         else if (winner === 2)
-            await this.mouvGameWinnerById(this.myGame, this.myRaq2.user_id);
+            await this.mouvGameWinnerById(myGame, this.myRaq2.user_id);
         else if (winner === 0)
-            await this.mouvGameWinnerById(this.myGame, 0);
+            await this.mouvGameWinnerById(myGame, 0);
     }
 
     async mouvRaq(data)
@@ -443,15 +443,14 @@ export class GameService {
         
         if (data.witchRaq === 1)
         {
-            pastP_y = (await this.TakeRaquetteById(this.myGame.raq1)).p_y;
-            await this.mouvRaquettePyById(this.myGame.raq1, pastP_y + data.p_y)
+            pastP_y = (await this.TakeRaquetteById(data.myGame.raq1)).p_y;
+            await this.mouvRaquettePyById(data.myGame.raq1, pastP_y + data.p_y)
         }
         else if (data.witchRaq === 2)
         {
-            pastP_y = (await this.TakeRaquetteById(this.myGame.raq2)).p_y;
-            await this.mouvRaquettePyById(this.myGame.raq2, pastP_y + data.p_y)
+            pastP_y = (await this.TakeRaquetteById(data.myGame.raq2)).p_y;
+            await this.mouvRaquettePyById(data.myGame.raq2, pastP_y + data.p_y)
         }
-
     }
 
     async end(client, data)
