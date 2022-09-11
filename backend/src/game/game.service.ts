@@ -27,7 +27,6 @@ export class GameService {
     myRaq1;
     myRaq2;
     myBall;
-
     //myGames: Games[];
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@//
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@//
@@ -291,10 +290,8 @@ export class GameService {
     @WebSocketServer()
 	server: Server;
 	handleConnection(client: Socket){
-        console.log("connected : ", client.id)
 	}
 	handleDisConnect(client: Socket){
-        console.log("distconnected : ", client.id)
 	}
 	@SubscribeMessage('Lancer de comunication')
 	async handleEvent(@MessageBody() data, @ConnectedSocket() client: Socket)
@@ -304,9 +301,6 @@ export class GameService {
                 client.emit('initGame', {canvas:this.myGame.canvasX})
                 client.emit('update', {myGame:this.myGame, myRaq1:this.myRaq1, myRaq2:this.myRaq2})
                 client.on('update', async (data2) => {
-                    // if ((data.type === -1 && data2.myGame && data2.myRaq1 && data2.myRaq2 && data2.myBall) || data.type != -1)
-                    // {
-                    // }
                     client.emit('update', {myGame:await this.TakeGameById(data2.myGame.id), myRaq1:await this.TakeRaquetteById(data2.myGame.raq1)
                         , myRaq2:await this.TakeRaquetteById(data2.myGame.raq2), myBall:await this.TakeBallById(data2.myGame.ball_id)})
                 })
@@ -369,51 +363,6 @@ export class GameService {
         }
         this.myGame = tmpGame;
     }
-
-    // async searchGame(data, client){
-    //     let tmpGame;
-    //     let raquette;
-    //     let raqCheck;
-    //     if (data.gameId > 0)
-    //         tmpGame = await this.TakeGameById(data.gameId);
-    //     else if (data.gameId === -1)
-    //     {
-    //         tmpGame = await this.insertGame(data.canvasX, data.type, true, data.invitationId);
-    //         client.emit('invitation', {userID: data.invitationId, gameID:tmpGame.id, userInviteID:data.userId});
-    //     }
-    //     else
-    //     {
-    //         tmpGame = await this.TakeGameByRaq(data.userId);
-    //         if (tmpGame === undefined)
-    //         {
-    //             tmpGame = await this.TakeGameByRaq1(data.type);
-    //             if 	(tmpGame === null || tmpGame.raq1 == -1)
-    //             {
-    //                 tmpGame = await this.TakeGameByRaq2(data.type);
-    //                 if (tmpGame != null)
-    //                     raqCheck = await this.TakeRaquetteById(tmpGame.raq1);
-    //             }	
-    //             if (tmpGame === null  || raqCheck.user_id === data.userId)
-    //                 tmpGame = await this.insertGame(data.canvasX, data.type, false,-1);
-    //         }
-    //     }
-    //     if (data.type != -1 && tmpGame.raq1 === -1)
-    //     {
-    //         this.myBall = await this.insertBall(tmpGame.canvasX/2, tmpGame.canvasY/2, 1, 1); 
-    //         await this.mouvGameBallId(tmpGame, this.myBall.id);
-    //         raquette = await this.insertRaquette(tmpGame.blocksize ,tmpGame.canvasY/2 - (tmpGame.blocksize * (5 - tmpGame.dificult))/2, tmpGame.blocksize * (5 - tmpGame.dificult), data.userId ,false);
-    //         await this.mouvGameRaq1(tmpGame,raquette.id);
-    //         this.myRaq1 = raquette;
-    //     }
-    //     else if (data.type != -1 && tmpGame.raq2 === -1)
-    //     {
-    //         raquette = await this.insertRaquette(tmpGame.canvasX - (tmpGame.blocksize * 2),tmpGame.canvasY/2 - (tmpGame.blocksize * (5 - tmpGame.dificult))/2, tmpGame.blocksize * (5 - tmpGame.dificult), data.userId ,false);
-    //         await this.mouvGameRaq2(tmpGame,raquette.id);
-    //         this.myRaq2 = raquette;
-    //     }
-    //     this.myGame = tmpGame;
-        
-    // }
 
     async mouvBall(newX, newY, myGame)
     {

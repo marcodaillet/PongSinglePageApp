@@ -6,7 +6,7 @@
 /*   By: mbonnet <mbonnet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 15:50:20 by mbonnet           #+#    #+#             */
-/*   Updated: 2022/09/07 12:18:44 by mbonnet          ###   ########.fr       */
+/*   Updated: 2022/09/07 12:30:26 by mbonnet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,7 +214,7 @@ export const Pong = () => {
 	function beforeStartGame()
 	{
 		stade();
-		ctx.fillStyle = "#000000";
+		ctx.fillStyle = "#1890f";
 		ctx.font = "40pt Calibri,Geneva,Arial";
 		ctx.fillText("Waiting...", myGame.canvasX/2 - 100 ,  myGame.canvasY/2);
 	}
@@ -247,7 +247,7 @@ export const Pong = () => {
 	async function end(socket, data2)
 	{
 		let str;
-		ctx.fillStyle = "#000000";
+		ctx.fillStyle = "#1890f";
 		if (data.userId === data2.winner_id)
 			str = "Winner !"
 		else if (data2.winner_id === 0)
@@ -289,7 +289,7 @@ export const Pong = () => {
 	}
 	function stade()
 	{	
-		ctx.fillStyle = "#000000";
+		ctx.fillStyle = "#1890f";
 		ctx.font = "20pt Calibri,Geneva,Arial";
 		ctx.fillText(myGame.point1 + " | " + myGame.point2, 20 , 40);
 		ctx.fillRect(myGame.canvasX/2, 0,  1, myGame.canvasY);	
@@ -388,8 +388,9 @@ export const Pong = () => {
 	 	canvas = document.createElement('canvas');
 	 	canvas.width =  canvasX;
 	 	canvas.height =	canvasX*0.6;
-	 	canvas.style.border = "1px solid";
+	 	canvas.style.border = "10px solid";
 	 	ctx = canvas.getContext('2d');
+		ctx.filleStyle = "#1890f";
 	 	parent.appendChild(canvas);
 		await axios.post('user/setInStatus');
 	}
