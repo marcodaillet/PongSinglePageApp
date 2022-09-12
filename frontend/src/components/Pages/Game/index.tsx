@@ -6,7 +6,7 @@
 /*   By: mbonnet <mbonnet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 15:50:20 by mbonnet           #+#    #+#             */
-/*   Updated: 2022/09/07 12:30:26 by mbonnet          ###   ########.fr       */
+/*   Updated: 2022/09/12 08:58:52 by mbonnet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -292,7 +292,7 @@ export const Pong = () => {
 		ctx.fillStyle = "#1890f";
 		ctx.font = "20pt Calibri,Geneva,Arial";
 		ctx.fillText(myGame.point1 + " | " + myGame.point2, 20 , 40);
-		ctx.fillRect(myGame.canvasX/2, 0,  1, myGame.canvasY);	
+		ctx.fillRect(myGame.canvasX/2, 0,  5, myGame.canvasY);	
 	}
 	function draws()
 	{
@@ -429,7 +429,7 @@ export const Pong = () => {
 			   mouvs(socket);
 			   checkEnd(socket);
 		   }
-		  	setTimeout(forEmitUpdateWithTimeout, 2);
+		  	setTimeout(forEmitUpdateWithTimeout, 4);
 		});
 	}
 	useEffect(() => {
