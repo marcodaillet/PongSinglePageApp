@@ -217,11 +217,11 @@ export const Profile = () => {
                                         {games.filter((game: GameData) => game.winner_id === user.id || game.looser_id === user.id).map((gameData: GameData) => 
                                         <tr key={gameData.id}>
                                             <td>#{gameData.id}</td>
-                                            <td>{gameData.winner_id}: {gameData.winner_point} points</td>
+                                            <td>{gameData.winner_name}: {gameData.winner_point} points</td>
                                             <td> VS </td>
-                                            <td>{gameData.looser_id}: {gameData.looser_point} points</td>
+                                            <td>{gameData.looser_name}: {gameData.looser_point} points</td>
                                             {
-                                            <td>{gameData.winner_id}</td>
+                                            <td>{gameData.winner_name}</td>
                                             }
                                         </tr>
                                         )}

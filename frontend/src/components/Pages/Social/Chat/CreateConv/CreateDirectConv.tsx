@@ -62,9 +62,15 @@ export const CreateDirectConv = () => {
     };
 
     function selectUser(selected: User[]) {
-        setChanUsers(selected);
-        if (selected.length !== 2)
+        if (selected.length !== 2) {
             setSuccess(false);
+            return ;
+        }
+        else {
+            setSuccess(true);
+            setChanUsers(selected);
+        }
+        console.log(selected);
     }
 
     useEffect(() => {

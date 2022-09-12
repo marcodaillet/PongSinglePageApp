@@ -165,9 +165,9 @@ export const PublicProfile = (props: any) => {
                                             {games.filter((game: GameData) => game.winner_id === publicUser.id || game.looser_id === publicUser.id).map((gameData: GameData) => 
                                             <tr key={gameData.id}>
                                                 <td>#{gameData.id}</td>
-                                                <td>{gameData.winner_id}: {gameData.winner_point} pts</td>
+                                                <td>{gameData.winner_name}: {gameData.winner_point} pts</td>
                                                 <td></td>
-                                                <td>{gameData.looser_id}: {gameData.looser_point} pts</td>
+                                                <td>{gameData.looser_name}: {gameData.looser_point} pts</td>
                                             </tr>
                                             )}
                                         </tbody>

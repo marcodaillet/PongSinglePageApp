@@ -6,7 +6,7 @@
 /*   By: mbonnet <mbonnet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/08 15:50:20 by mbonnet           #+#    #+#             */
-/*   Updated: 2022/09/12 08:58:52 by mbonnet          ###   ########.fr       */
+/*   Updated: 2022/09/12 14:13:52 by mbonnet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,17 +60,8 @@ export const Pong = () => {
 		m_y = 1;
 	}
 	
-	class User {
-		constructor(id, name){
-			this.id = id;
-			this.name = name		
-		}
-		id = -1;
-		name = "";
-	}
-	
 	class Historique {
-		constructor(winner_name, looser_name){
+		constructor(winner_name, looser_name, id){
 			this.winner_id = myGame.winner;
 			this.winner_name = winner_name;
 			if (this.winner_id !== myRaq1.user_id)
@@ -89,7 +80,9 @@ export const Pong = () => {
 			}
 			this.dificult = myGame.dificult;
 			this.looser_name = looser_name;
+			this.id = id;
 		}
+		id = -1;
 		coter_winner = -1;
 		winner_id = -1;
 		winner_name = "";
@@ -102,11 +95,11 @@ export const Pong = () => {
 	let canvas;
 	let ctx;
 	let socket;
-	let userId;
 	let myGame = new Games();
 	let myRaq1 = new Raq();
 	let myRaq2 = new Raq();
 	let myBall = new Ball;
+	let myend = 0;
 
 
 	
@@ -229,9 +222,9 @@ export const Pong = () => {
 		socket.emit('user', {id_win: myGame.winner, id_loo: loo});
 		socket.on('user',(data2) => {
 			if (data2.winner != null && data2.looser != null)
-				var res = new Historique(data2.winner.username,data2.looser.username);	
+				var res = new Historique(data2.winner.username,data2.looser.username,myGame.id);	
 			else 
-				var res = new Historique("","");
+				var res = new Historique("","", myGame.id);
 			socket.emit('end', {hist:res, myGame:myGame});
 		})
 	}

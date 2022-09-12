@@ -130,16 +130,21 @@ export class GameService {
         return ;
     }
 
-    async TakeGameByRaq1(dif){
-        let Game = await this.GamesRepository.findOneBy({
-            raq1 : -1,
-            private : false,
-            dificult : dif
+    async TakehistById(id){
+        let Game = await this.HistoriqueRepository.findOneBy({
+            id : id,
         })
         return (Game);
     }
 
     async TakeGameById(id: number){
+        let Game = await this.GamesRepository.findOneBy({
+            id : id,
+        })
+        return (Game);
+    }
+
+    async TakeHistById(id: number){
         let Game = await this.GamesRepository.findOneBy({
             id : id,
         })
@@ -404,9 +409,13 @@ export class GameService {
 
     async end(client, data)
     {
-        let res = await this.insertHistorique(data.hist);
-        await this.delateGame(data.myGame);
-        client.emit('messageEnd',res);
+        let game = await this.TakehistById(data.myGame.id);
+        if (!game)
+        {
+            let res = await this.insertHistorique(data.hist);
+            await this.delateGame(data.myGame);
+        }
+        client.emit('messageEnd',data.hist);
     }
 
     async CleanGame(client, data)

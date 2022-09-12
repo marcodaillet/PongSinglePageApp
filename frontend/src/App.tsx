@@ -47,9 +47,9 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<SignIn/>} />
+            <Route path="/register" element={<Register/>} />
             <Route path="/2fasignin" element={<SignIn2FA/>} />
             <Route path="/home" element={<Layout children={<Home/>} /> } />
-            <Route path="/register" element={<Layout children={<Register/>} /> } />
             <Route path="/game" element={<Layout children={<Game/>} /> } />
             <Route path="/game/waiting" element={<Layout children={<Waiting/>} /> } />
             <Route path="/game/playing" element={<PongLayout children={<Pong/>} /> } />

@@ -1,9 +1,12 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HeroContainer } from "../../PlayGame";
-import { Button, Typography } from "@mui/material";
+import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import "../style/style.css"
 import axios from "axios";
+import VideogameAssetIcon from '@mui/icons-material/VideogameAsset';
+import { HEADER_HEIGHT } from "../../../../utils/constants";
+import { AppTitle } from "../../../Header/AppTitle";
 
 export const Register = () => {
     const [username, setUsername] = useState('');
@@ -35,6 +38,17 @@ export const Register = () => {
 
     return (
         <HeroContainer>
+                <AppBar position="fixed" sx = {{ height: HEADER_HEIGHT, }}>
+                    <Toolbar variant="dense">
+                        <Box sx={{ flexGrow: 1 }} />
+                        <VideogameAssetIcon fontSize='large' />
+                        <Box sx={{ flexGrow: 1 }}>
+                        <AppTitle />
+                        </Box>
+                        <Box sx={{ display: { xs: 'none', md: 'flex', alignItems: 'center' } }}>
+                        </Box>
+                    </Toolbar>
+                </AppBar>
             <form onSubmit={submit}>
                 <Typography fontSize={28}> {invalid ? "Invalid informations, please try again" : "Please enter your informations" } </Typography>
                 <div className="form-field">
