@@ -31,9 +31,6 @@ export class AuthenticationService {
     async verifyTwoFactorSecret(code: string, id: number) {
         const client = await this.userService.findOne(id);
         const ret = authenticator.verify({token: code, secret: client.twoFactorSecret})
-        if (ret == false)
-            await this.userService.setTwoFactorSecret("", id);
-        console.log(client);
         return ret
     }
 

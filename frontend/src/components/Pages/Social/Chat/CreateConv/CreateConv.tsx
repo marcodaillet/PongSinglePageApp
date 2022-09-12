@@ -17,17 +17,23 @@ export const CreateConv = () => {
         return (navigate("/social/chat/createDirectConv"))
     }
 
-
+    const joinConv = (event: SyntheticEvent) => {
+        event.preventDefault();
+        return (navigate("/social/chat/joinConversation"))
+    }
     return (
         <HeroContainer>
             <HeroContent>
-            <Typography fontSize={32} color="textSecondary" align="center" marginTop="30px" fontStyle={"italic"} >Choose the conversation mode that you want </Typography>
+            <Typography fontSize={32} color="textSecondary" align="center" marginTop="30px" fontStyle={"italic"} >Choose the conversation mode that you want to create </Typography>
             <Box sx = {{ flexGrow: 1, p: 3 }} /> 
-                <Grid container direction="row" justifyContent="space-around" alignItems="center" >
-                    <Button variant="contained" size="medium" style={{ fontSize: 25 }} endIcon={<ArrowForwardIosIcon/>} onClick={createGroupConv}>Group conversation</Button>
-                    <Box sx = {{ flexGrow: 1, p: 3 }} /> 
-                    <Button variant="contained" size="medium" style={{ fontSize: 25 }} endIcon={<ArrowForwardIosIcon/>} onClick={createDirectConv}>Private conversation</Button>
-                </Grid>
+            <Grid container direction="row" justifyContent="space-around" alignItems="center" >
+                <Button variant="contained" size="medium" style={{ fontSize: 25 }} endIcon={<ArrowForwardIosIcon/>} onClick={createGroupConv}>Group conversation</Button>
+                <Box sx = {{ flexGrow: 1, p: 3 }} /> 
+                <Button variant="contained" size="medium" style={{ fontSize: 25 }} endIcon={<ArrowForwardIosIcon/>} onClick={createDirectConv}>Private conversation</Button>
+            </Grid>
+            <Typography fontSize={32} color="textSecondary" align="center" marginTop="30px" fontStyle={"italic"} > Or </Typography>
+            <Box sx = {{ flexGrow: 1, p: 3 }} /> 
+            <Button variant="contained" size="medium" style={{ fontSize: 25 }} endIcon={<ArrowForwardIosIcon/>} onClick={joinConv}> Join a conversation </Button>
             </HeroContent>
         </HeroContainer>
     )

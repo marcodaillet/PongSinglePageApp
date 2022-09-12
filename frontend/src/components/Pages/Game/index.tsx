@@ -98,12 +98,8 @@ export const Pong = () => {
 	let myGame = new Games();
 	let myRaq1 = new Raq();
 	let myRaq2 = new Raq();
-	let myBall = new Ball;
-	let myend = 0;
-
-
-	
-
+	let myBall = new Ball();
+	// let myend = 0;
 	
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@// 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@// 

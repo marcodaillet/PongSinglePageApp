@@ -1,4 +1,4 @@
-import { Injectable, Req } from '@nestjs/common';
+import { Injectable, Req, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm'
 import { Chat, ChatUser } from './chat.entity';
@@ -99,7 +99,6 @@ export class ChatService {
     }
 
     async mouvIsPrivateChatById(id:number, isPrivate:boolean){
-        console.log("We come here with " + isPrivate)
         let res = await this.ChatRepository.findOneBy({
             id: id
         });
@@ -211,6 +210,16 @@ export class ChatService {
             }
         })
         this.ChatUserRepository.save(allUsers);
+    }
+
+    async addUser(chanId: number, userId: number) {
+        let userChans: number[] = await this.getChatUserByUserId(userId);
+        for (let i = 0; i < userChans.length; i++) {
+            if (userChans[i] == chanId)
+                return (false);
+        }
+        await this.insertChatUser(chanId, userId, 1);
+        return (true);
     }
 
 }

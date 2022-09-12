@@ -11,6 +11,7 @@ type SideBarChannelsProps = {
     setCurrentChannelId: Function;
     userId: number;
 };
+
 const SideBarChannels = (props: SideBarChannelsProps) => {
     const [chans, setChans] = useState<Array<Chan>>([])
     useEffect(() => {

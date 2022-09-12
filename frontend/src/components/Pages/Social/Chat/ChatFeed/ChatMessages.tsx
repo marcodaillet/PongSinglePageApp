@@ -278,7 +278,7 @@ export const ChannelMessages = (props: ChannelMessagesProps) => {
                 ))}
             </div>
             <div className="inputBar">
-                <input className="input" required value={content} type="text" placeholder="Write your message here" onChange={(e) => setContent(e.target.value)}/>
+                <input id="inputBar" className="input" required value={content} type="text" placeholder="Write your message here" onChange={(e) => setContent(e.target.value)} />
                 <Button startIcon={<SendIcon/>} onClick={submit}></Button>
             </div> 
 

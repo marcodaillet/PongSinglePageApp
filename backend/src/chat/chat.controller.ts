@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { Chat} from './chat.entity';
 import { ChatService } from './chat.service';
 import { UserService } from './../user/user.service';
@@ -105,6 +105,13 @@ export class ChatController {
     }
 
     @UseGuards(verifyUser)
+    @Post('addUser')
+    async addUser(@Body() body) {
+        let ret = await this.chatService.addUser(body.chanId, body.userId);
+        return (ret);
+    }
+
+    @UseGuards(verifyUser)
     @Post('deleteUser')
     async deleteUser(@Body() body) {
         let ret = await this.chatService.deleteUserFromChat(body.chanId, body.userId);
@@ -122,7 +129,6 @@ export class ChatController {
     @Post('changePassword')
     async changePassword(@Body() body) {
         let ret = await this.chatService.mouvPasswordChatById(body.chanId, body.newPassword);
-        console.log(typeof(body.newPassword) + body.newPassword + "#")
         if (body.newPassword === "")
             await this.chatService.mouvIsPrivateChatById(body.chanId,false)
         else
@@ -135,5 +141,12 @@ export class ChatController {
     async checkPassword(@Body() body) {
         let ret = await this.chatService.checkPassword(body.chanId, body.password);
         return (ret);
+    }
+
+    @UseGuards(verifyUser)
+    @Get('all')
+    async getAllChans() {
+        let ret = await this.chatService.getChat();
+        return ret;
     }
 }

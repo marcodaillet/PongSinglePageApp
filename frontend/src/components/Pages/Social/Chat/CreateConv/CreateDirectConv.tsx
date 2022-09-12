@@ -85,7 +85,6 @@ export const CreateDirectConv = () => {
 
                 {chanAdmin && (
                     <>
-                        {/* <Multiselect selectedValues={chanAdmin} displayValue="username" placeholder="You" /> */}
                         <Multiselect options={allUsers} selectedValues={chanAdmin} displayValue="username" placeholder="Add one user here" onSelect={selectUser} onRemove={selectUser} />
                     </>
                 )}
