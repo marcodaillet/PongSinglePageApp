@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 import axios from "axios";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import io from "socket.io-client";
 import { useEffect } from 'react';
 
@@ -211,6 +211,7 @@ export const Pong = () => {
 	async function MesEnd(socket, data)
 	{
 		var loo;
+		var res;
 		if (myGame.winner !== myRaq1.user_id)
 			loo = myRaq1.user_id;
 		else
@@ -218,9 +219,9 @@ export const Pong = () => {
 		socket.emit('user', {id_win: myGame.winner, id_loo: loo});
 		socket.on('user',(data2) => {
 			if (data2.winner != null && data2.looser != null)
-				var res = new Historique(data2.winner.username,data2.looser.username,myGame.id);	
+				res = new Historique(data2.winner.username,data2.looser.username,myGame.id);	
 			else 
-				var res = new Historique("","", myGame.id);
+				res = new Historique("","", myGame.id);
 			socket.emit('end', {hist:res, myGame:myGame});
 		})
 	}
@@ -388,7 +389,6 @@ export const Pong = () => {
 	{
 		return (io('http://localhost:3000'));
 	}
-	const navigate = useNavigate();
 
 	async function run(){
 		await axios.get('game');
@@ -409,7 +409,7 @@ export const Pong = () => {
 			update(data);
 			if (myGame.raq2 === -1)
 				beforeStartGame();
-		   else if (myGame.winner != -1)
+		   else if (myGame.winner !== -1)
 			   MesEnd(socket, myGame);
 		   else
 		   {
@@ -423,7 +423,7 @@ export const Pong = () => {
 	}
 	useEffect(() => {
 			run();
-	}, []);
+	}, [run]);
 	return (
 			<div></div>
 	);
