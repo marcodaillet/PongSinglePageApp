@@ -4,9 +4,9 @@ clear :
 	docker-compose down --rmi all
 
 fclear: clear 
-	docker image prune 
-	docker volume prune 
-	docker network prune 
+	docker image prune -y
+	docker volume prune -y
+	docker network prune -y
 	docker system prune --volumes 
 
 re : fclear all

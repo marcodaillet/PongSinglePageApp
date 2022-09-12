@@ -84,7 +84,7 @@ export class AuthController {
     async verify2fa(@Req() request: Request, @Body() data) {
         const clientID = await this.authenticationService.clientID(request);
         const validation = await this.authenticationService.verifyTwoFactorSecret(data.code, clientID);
-        if (!validation)
+        if (!validation)           
             throw new UnauthorizedException('Wrong authentication code');
         else
             await this.userService.enableTwoFactor(clientID);
@@ -107,6 +107,4 @@ export class AuthController {
         await this.userService.disableTwoFactor(clientID);
         return (true);
     }
-
-
 }

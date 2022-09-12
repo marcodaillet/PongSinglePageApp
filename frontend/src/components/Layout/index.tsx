@@ -28,7 +28,6 @@ interface LayoutProps {
 export const Layout = (props: LayoutProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [unauth, setUnauth] = useState(false);
-    const [unreg, setUnReg] = useState(false);
     const toggleMenu = () => setIsOpen((isOpen) => !isOpen);
     let nav = useNavigate();
     
@@ -40,7 +39,6 @@ export const Layout = (props: LayoutProps) => {
                 const user2 = await axios.get('userId');
                 axios.post('/game/checkEnd', {id:user2.data})
                 axios.post('user/setOnStatus')
-                console.log(user);
                 if (user.data.status !== 'IN GAME' && user.data.status !== 'ONLINE')
                     setUnauth(true);
             }
@@ -57,9 +55,7 @@ export const Layout = (props: LayoutProps) => {
         if (unauth){
             return nav("/");
         }
-        else if (unreg)
-            return nav("/register");
-    }, [unauth, unreg, nav]);
+    }, [unauth, nav]);
 
     return (
         <LayoutWrapper style={{width: "100%", height: "100%"}}>
