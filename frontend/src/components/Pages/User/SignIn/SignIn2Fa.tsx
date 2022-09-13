@@ -49,7 +49,7 @@ export const SignIn2FA = () => {
                         <form onSubmit={submit}>
                             <Typography fontSize={28}> {fail ? "Invalid code, please try again" : "Please enter your code from the Google Authentificator App"} </Typography>
                             <div className="form-floating">
-                                <label htmlFor="floatingInput">Code :</label>
+                                <label htmlFor="floatingInput">Code : </label>
                                 <input required onChange={e => setCode(e.target.value)}></input>
                             </div>
                             <button type="submit">Submit</button>

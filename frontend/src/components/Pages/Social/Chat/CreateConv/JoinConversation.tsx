@@ -41,8 +41,7 @@ export const JoinConversation = () => {
 
     const tryJoin = async(e:  SyntheticEvent, chanId: Number, userId: number) => {
         try {
-            const {ret} = await axios.post("chat/addUser", {chanId: chanId, userId: userId});
-            console.log(ret);
+            const ret = await axios.post("chat/addUser", {chanId: chanId, userId: userId});
             if (ret.data == true) {
                 alert("You successfully joined a channel");
                 setRedi(true);
@@ -58,7 +57,7 @@ export const JoinConversation = () => {
 
     useEffect(() => {
         if (redi) {
-            return navigate("social/chat");
+            return navigate("/social/chat");
         }
     }, [redi]);
 

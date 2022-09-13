@@ -40,6 +40,7 @@ export const About = () =>
     return (
         <HeroContainer>
             <HeroContent>
+                <Box sx = {{ flexGrow: 1, p: 3 }} /> 
                 <PageTitle title={"About the game"} />
                 <Typography color="textSecondary" align="center" marginTop="30px" fontStyle={"italic"} >How to play: arrow up to move the paddle up, and down to move it down. Nothing more. </Typography>
                 <Box sx = {{ flexGrow: 1, p: 3 }} /> 

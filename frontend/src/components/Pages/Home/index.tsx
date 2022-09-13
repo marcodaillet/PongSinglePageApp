@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-// import { CustomVideo } from "./video";
+import { CustomVideo } from "./video";
 import { Typography, styled as StyledM, Box } from "@mui/material";
 import axios from "axios";
 
@@ -55,7 +55,7 @@ export const Home = () =>
 
     return (
         <HeroContainer>
-            {/* <CustomVideo/> */}
+            <CustomVideo/>
             <HeroContent>
                 <PageTitle title={"Welcome"} />
                 <Typography fontSize={32} color="textSecondary"> {username} ! </Typography>

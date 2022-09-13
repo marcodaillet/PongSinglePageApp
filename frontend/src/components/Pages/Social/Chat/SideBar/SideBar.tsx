@@ -56,11 +56,11 @@ const SideBarChannels = (props: SideBarChannelsProps) => {
                 Group Messages
             </Divider>
             <Col>
-            {chans.map((chan: Chan) => (
-                <Row key={chan.id} style={{marginLeft: "25px", padding: "5px"}}>
-                    <Button variant="outlined" size="small" onClick={(e) => checkIfBanned(e, chan.id)} endIcon={(chan.isPrivate ? <LockIcon></LockIcon> : null)}>{chan.name}</Button>
-                </Row>
-            ))}
+                {chans.map((chan: Chan) => (
+                    <Row justify="center" key={chan.id} style={{marginLeft: "25px", padding: "5px"}}>
+                        <Button variant="outlined" size="small" onClick={(e) => checkIfBanned(e, chan.id)} endIcon={(chan.isPrivate ? <LockIcon></LockIcon> : null)}>{chan.name}</Button>
+                    </Row>
+                ))}
             </Col>
         </div>
     )
@@ -152,7 +152,7 @@ const SideBarDirectConvs = (props: SideBarDirectConvsProps) => {
             </Divider>
             <Col>
                 {directConvs.map((conv: Chan) => (
-                    <Row key={conv.id} style={{marginLeft: "25px", padding: "5px"}}>
+                    <Row justify="center" key={conv.id} style={{marginLeft: "25px", padding: "5px"}}>
                         <RenderDirectConvs key={conv.id} setCurrentChannelId={props.setCurrentChannelId} userName={props.userName} directConv={conv} userId={props.userId} chanId={conv.id} />
                     </Row>
                 ))}
@@ -170,7 +170,7 @@ type SideBarProps = {
 
 export const SideBar = (props: SideBarProps) => {
     return (
-        <div>
+        <div className="sideBar">
             <SideBarChannels setCurrentChannelId={props.setCurrentChannelId} userId={props.userId} />
             <SideBarDirectConvs userId={props.userId} userName={props.userName} currentChannelId={props.currentChannelId} setCurrentChannelId={props.setCurrentChannelId} />
             <Divider orientation="center" style={{ color: "#6281ca"}}>
