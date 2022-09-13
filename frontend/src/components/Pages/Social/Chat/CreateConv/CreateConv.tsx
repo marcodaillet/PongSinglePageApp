@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { SyntheticEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { HeroContainer, HeroContent } from "../../../PlayGame";

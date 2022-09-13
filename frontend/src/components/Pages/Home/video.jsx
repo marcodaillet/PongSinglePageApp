@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import Video from '../../../videos/video.mp4'
-import { PageTitle } from '../../PageTitle';
 
 const VideoBg = styled.video`
     position: absolute;

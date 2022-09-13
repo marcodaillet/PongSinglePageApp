@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { AppBar, Box, Toolbar } from '@mui/material';
 import { Squash as MenuButton } from 'hamburger-react';
 import { AppTitle } from './AppTitle';
-import { ThemeSwitcher } from './ThemeSwitcher';
+// import { ThemeSwitcher } from './ThemeSwitcher';
 import VideogameAssetIcon from '@mui/icons-material/VideogameAsset';
 import { HEADER_HEIGHT } from '../../utils/constants';
-
-// import { DefaultMenu, MobileMenu } from './Menu';
 
 interface MenuButtonProps {
   toggleMenu: () => void;
@@ -40,7 +38,7 @@ export const Header = ({ toggleMenu }: HeaderProps) => {
                       <AppTitle />
                     </Box>
                     <Box sx={{ display: { xs: 'none', md: 'flex', alignItems: 'center' } }}>
-                    <ThemeSwitcher />
+                    {/* <ThemeSwitcher /> */}
                     </Box>
                 </Toolbar>
             </AppBar>

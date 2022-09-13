@@ -5,7 +5,7 @@ export const FOOTER_TEXT = `${new Date().getFullYear()} Made in Typescript with 
 
 export const FOOTER_HEIGHT = 30;
 export const HEADER_HEIGHT = 50;
-export const DRAWER_WIDTH = 175;
+export const DRAWER_WIDTH = 200;
 
 export const DARK_MODE_THEME = 'dark';
 export const LIGHT_MODE_THEME = 'light';

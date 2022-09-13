@@ -54,7 +54,7 @@ export const Game = () =>
     }
     return (
         <HeroContainer>
-            {/* <CustomVideo/> */}
+            <CustomVideo/>
             <HeroContent>
                 <PageTitle title={"Choose your mode"} />
                 <Typography color="textSecondary" align="center" marginTop="30px" fontStyle={"italic"} >Easy mode is for children and elderly people, Normal mode is played by decent human beings and Hard is reserved to the elite (just kidding nobody ever touched that Pong) </Typography>

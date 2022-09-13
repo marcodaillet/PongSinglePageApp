@@ -42,11 +42,11 @@ export const JoinConversation = () => {
     const tryJoin = async(e:  SyntheticEvent, chanId: Number, userId: number) => {
         try {
             const ret = await axios.post("chat/addUser", {chanId: chanId, userId: userId});
-            if (ret.data == true) {
+            if (ret.data === true) {
                 alert("You successfully joined a channel");
                 setRedi(true);
             }
-            else if (ret.data == false) {
+            else if (ret.data === false) {
                 alert("You are already in this channel");
             }
         }
@@ -59,7 +59,7 @@ export const JoinConversation = () => {
         if (redi) {
             return navigate("/social/chat");
         }
-    }, [redi]);
+    }, [redi, navigate]);
 
     return (
         <HeroContainer>
