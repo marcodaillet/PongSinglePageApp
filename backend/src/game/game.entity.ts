@@ -84,4 +84,8 @@ export class Games {
     invite: number;
     @Column({ nullable: true })
     timeStart: Date;
+    @Column({ nullable: true })
+    idSocket1: string;
+    @Column({ nullable: true })
+    idSocket2: string;
 }

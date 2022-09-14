@@ -36,7 +36,7 @@ export class GameService {
 
     //@@@@@@@@@@@@@@@@@@@@@ insert game @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@//
 
-    async insertGame(canvasX, dificult, priv, invite){
+    async insertGame(canvasX, dificult, priv, invite, socketId){
         const GameTmp: Games = new Games();
         GameTmp.ball_id = -1;
         GameTmp.canvasX = canvasX;
@@ -50,6 +50,8 @@ export class GameService {
         GameTmp.winner = -1;
         GameTmp.private = priv;
         GameTmp.invite = invite;
+        GameTmp.idSocket1 = socketId;
+        GameTmp.idSocket2 = "";
         GameTmp.timeStart = new Date();
         await this.GamesRepository.save(GameTmp);
         return (GameTmp);
@@ -130,6 +132,19 @@ export class GameService {
         return ;
     }
 
+    async TakeGameBySocket(socket){
+        let Game = await this.GamesRepository.findOneBy({
+            idSocket1 : socket,
+        })
+        if (!Game)
+        {
+            Game = await this.GamesRepository.findOneBy({
+                idSocket2 : socket,
+            })
+        }
+        return (Game);
+    }
+
     async TakehistById(id){
         let Game = await this.HistoriqueRepository.findOneBy({
             id : id,
@@ -207,6 +222,15 @@ export class GameService {
 
     async mouvGameRaq2(game: Games, raq2: number){
         game.raq2 = raq2;
+        this.GamesRepository.save(game)
+    }
+
+    async mouvGameSocketId1(game: Games, socket: string){
+        game.idSocket1 = socket;
+        this.GamesRepository.save(game)
+    }
+    async mouvGameSocketId2(game: Games, socket: string){
+        game.idSocket2 = socket;
         this.GamesRepository.save(game)
     }
 
@@ -296,7 +320,7 @@ export class GameService {
 	server: Server;
 	handleConnection(client: Socket){
 	}
-	handleDisConnect(client: Socket){
+	handleDisConnection(client: Socket){
 	}
 	@SubscribeMessage('Lancer de comunication')
 	async handleEvent(@MessageBody() data, @ConnectedSocket() client: Socket)
@@ -327,6 +351,14 @@ export class GameService {
                 client.on('user', async (data) => {
                     client.emit('user', {winner:await this.TakeUserById(data.id_win), looser:await this.TakeUserById(data.id_loo)});
                 })
+                client.on('disconnect', async () => {
+                    let theGame = await this.TakeGameBySocket(client.id);
+                    if (theGame)
+                    {
+                        theGame.winner = 0;
+                        this.GamesRepository.save(theGame);
+                    }
+                })
     }
     
     async searchGame(data, client){
@@ -336,7 +368,7 @@ export class GameService {
             tmpGame = await this.TakeGameById(data.gameId);
         else if (data.gameId === -1)
         {
-            tmpGame = await this.insertGame(data.canvasX, data.type, true, data.invitationId);
+            tmpGame = await this.insertGame(data.canvasX, data.type, true, data.invitationId, client.id);
             client.emit('invitation', {userID: data.invitationId, gameID:tmpGame.id, userInviteID:data.userId});
         }
         if (data.gameId === -2)
@@ -350,7 +382,7 @@ export class GameService {
                 }
             });
             if (!tmpGame)
-                tmpGame = await this.insertGame(data.canvasX, data.type, true, data.invitationId);
+                tmpGame = await this.insertGame(data.canvasX, data.type, true, data.invitationId,client.id);
         }
         if (tmpGame.raq1 === -1)
         {
@@ -358,12 +390,14 @@ export class GameService {
             await this.mouvGameBallId(tmpGame, this.myBall.id);
             let raquette = await this.insertRaquette(tmpGame.blocksize ,tmpGame.canvasY/2 - (tmpGame.blocksize * (5 - tmpGame.dificult))/2, tmpGame.blocksize * (5 - tmpGame.dificult), data.userId ,false);
             await this.mouvGameRaq1(tmpGame,raquette.id);
+            await this.mouvGameSocketId1(tmpGame,client.id);
             this.myRaq1 = raquette;
         }
         else if (tmpGame.raq2 === -1)
         {
             let raquette = await this.insertRaquette(tmpGame.canvasX - (tmpGame.blocksize * 2),tmpGame.canvasY/2 - (tmpGame.blocksize * (5 - tmpGame.dificult))/2, tmpGame.blocksize * (5 - tmpGame.dificult), data.userId ,false);
             await this.mouvGameRaq2(tmpGame,raquette.id);
+            await this.mouvGameSocketId2(tmpGame,client.id);
             this.myRaq2 = raquette;
         }
         this.myGame = tmpGame;
@@ -445,6 +479,3 @@ export class GameService {
         return this.HistoriqueRepository.find();
     }
 }
-
-
-

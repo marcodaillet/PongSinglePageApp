@@ -13,6 +13,19 @@ export const PasswordSettings = (props: PasswordSettingsProps) => {
     const [success, setSuccess] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [render, setRender] = useState(false);
+    const [userId, setUserId] = useState(0);
+
+    useEffect(() => {
+        let bool = true;
+        const getUser = async () => {
+            const {data} = await axios.get('userData')
+            if (bool)
+                setUserId(data.id);
+        }
+        getUser();
+        return () => {bool = false};
+    }, []);
+
 
     useEffect(() => {
         let bool = true;
@@ -33,14 +46,21 @@ export const PasswordSettings = (props: PasswordSettingsProps) => {
     let checkInput = async(event: SyntheticEvent) => {
         event.preventDefault();
         try {
-            const {data} = await axios.post('chat/checkPassword', {password: input, chanId: props.currentChanId});
-            console.log(data)
-            if (data === true) {
-                setSuccess(true);
-                setFail(false);
+            const check = await axios.post('chat/isAdmin', {userId: userId, chanId: props.currentChanId})
+            if (check.data === false) {
+                alert("You are not an admin anymore");
+                window.location.reload();
             }
             else {
-                setFail(true);
+                const {data} = await axios.post('chat/checkPassword', {password: input, chanId: props.currentChanId});
+                console.log(data)
+                if (data === true) {
+                    setSuccess(true);
+                    setFail(false);
+                }
+                else {
+                    setFail(true);
+                }
             }
         }
         catch (error) {
@@ -50,9 +70,16 @@ export const PasswordSettings = (props: PasswordSettingsProps) => {
 
     async function removePassword() {
         try {
-            await axios.post('chat/changePassword', {newPassword: "", chanId: props.currentChanId});
-            alert("Password has successfully been remove")
-            window.location.reload();
+            const check = await axios.post('chat/isAdmin', {userId: userId, chanId: props.currentChanId})
+            if (check.data === false) {
+                alert("You are not an admin anymore");
+                window.location.reload();
+            }
+            else {
+                await axios.post('chat/changePassword', {newPassword: "", chanId: props.currentChanId});
+                alert("Password has successfully been removed")
+                window.location.reload();
+            }
         }
         catch (error) {
             console.log("Couldn't remove channel password");
@@ -62,9 +89,16 @@ export const PasswordSettings = (props: PasswordSettingsProps) => {
     let submit = async (event: SyntheticEvent) => {
         event.preventDefault();
         try {
-            await axios.post('chat/changePassword', {newPassword: newPassword, chanId: props.currentChanId});
-            alert("Password has successfully been updated")
-            window.location.reload();
+            const check = await axios.post('chat/isAdmin', {userId: userId, chanId: props.currentChanId})
+            if (check.data === false) {
+                alert("You are not an admin anymore");
+                window.location.reload();
+            }
+            else {
+                await axios.post('chat/changePassword', {newPassword: newPassword, chanId: props.currentChanId});
+                alert("Password has successfully been updated")
+                window.location.reload();
+            }
         }
         catch (error) {
             console.log("Couldn't change channel password");

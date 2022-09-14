@@ -42,7 +42,7 @@ export const AdminPanel = (props: any) => {
         const isAdmin = async() => {
                 chanUsers.forEach((user: User) => {
                     if (user.id === userId) {
-                        if (user.userType !== 0) {
+                        if (user.userType !== 0 && user.userType !== -1) {
                             setNotAdmin(true);
                         }
                     } 
@@ -58,6 +58,11 @@ export const AdminPanel = (props: any) => {
 
     async function updateUserStatus(userId: number, status: number) {
         try {
+            const {data} = await axios.post('chat/isAdmin', {userId: props.userId, chanId: props.currentChannelId})
+            if (data.data === false) {
+                alert("You are not an admin anymore");
+                window.location.reload();
+            }
             await axios.post('chat/updateUserStatus', {userId: userId, status: status, chanId: chanId});
             if (status === 0)
                 alert("User is now an admin on this channel")
@@ -91,6 +96,7 @@ export const AdminPanel = (props: any) => {
                         {chanUsers.map((user: User) => (
                             <tr key={user.id}>
                                 <td>{user.username}</td>
+                                {user.userType === -1 ? <td>Cannot modify channel owner</td> : null}
                                 {user.userType !== 1 ? <td></td> : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 0)}>Make Admin</Button></td>}
                                 {user.userType !== 0 ? <td></td> : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 1)}>UnMake Admin</Button></td>}
                                 {user.userType !== 1 ? <td></td> : <td><Button size="small" variant="contained" onClick={() => updateUserStatus(user.id, 2)}>Mute</Button></td>}

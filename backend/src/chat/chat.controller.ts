@@ -54,7 +54,7 @@ export class ChatController {
     async createNewChan(@Body() data){
         const spec = JSON.parse(JSON.stringify(data));
         let newChan = await this.chatService.insertChat(spec.name, spec.isPrivate, spec.isDirectConv, spec.password);
-        this.chatService.insertChatUser(newChan.id, spec.adminId, 0);
+        this.chatService.insertChatUser(newChan.id, spec.adminId, -1);
         spec.users.forEach((user: User) => {
             if (user.id !== spec.adminId)
                 this.chatService.insertChatUser(newChan.id, user.id, 1);
@@ -78,7 +78,7 @@ export class ChatController {
     @Post('isAdmin')
     async isAdmin(@Body() body) {
         let ret = await this.chatService.getUserType(body.chanId, body.userId);
-        if (ret === 0)
+        if (ret === 0 || ret == -1)
             return (true)
         else
             return (false);

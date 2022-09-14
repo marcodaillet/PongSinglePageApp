@@ -83,7 +83,7 @@ export class ChatService {
         }
         catch (error) {
             console.log("Couldn't fetch user type");
-            return (-1);
+            return (-2);
         }
     }
     

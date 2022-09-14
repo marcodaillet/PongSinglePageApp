@@ -45,7 +45,7 @@ export const About = () =>
                 <Typography color="textSecondary" align="center" marginTop="30px" fontStyle={"italic"} >How to play: arrow up to move the paddle up, and down to move it down. Nothing more. </Typography>
                 <Box sx = {{ flexGrow: 1, p: 3 }} /> 
                 <PageTitle title={"About the Project"} />
-                <Typography color="textSecondary" align="center" marginTop="20px" marginBottom="20px" fontStyle={"italic"}>Project realised in TypeScrip React and NestJS with a PostGreSQL database by Arthur Tinseau, Marc-Etienne Bonnet and Marc-Eloi Daillet.</Typography>
+                <Typography color="textSecondary" align="center" marginTop="20px" marginBottom="20px" fontStyle={"italic"}>Project realised in TypeScrip React and NestJS with a PostGreSQL database by Elliot Bouju, Marc-Etienne Bonnet and Marc-Eloi Daillet.</Typography>
                 <LogoWrapper>
                     <StyledLogo src={logo} alt="logo" />
                 </LogoWrapper>
