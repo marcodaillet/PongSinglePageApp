@@ -11,6 +11,8 @@ export const JoinConversation = () => {
     const [channels, setChannels] = useState<Array<Chan>>([]);
     const [user, setUser] = useState({username: "", avatar:"", id: 0});
     const [redi, setRedi] = useState(false);
+    const [password, setPassword] = useState("");
+
 
     useEffect(() => {
         let bool = true;
@@ -41,13 +43,36 @@ export const JoinConversation = () => {
 
     const tryJoin = async(e:  SyntheticEvent, chanId: Number, userId: number) => {
         try {
-            const ret = await axios.post("chat/addUser", {chanId: chanId, userId: userId});
-            if (ret.data === true) {
-                alert("You successfully joined a channel");
-                setRedi(true);
+            const chan = await axios.post("chat/getChanById", {chanId: chanId});
+            if (chan.data.isPrivate) {
+                const pwd = await axios.post("chat/checkPassword", {chanId: chanId, password: password})
+                if (pwd.data == false) {
+                    alert("Wrong password");
+                    setPassword("");
+                    window.location.reload();
+                }
+                else {
+                    const ret = await axios.post("chat/addUser", {chanId: chanId, userId: userId});
+                    if (ret.data === true) {
+                        alert("You successfully joined a channel");
+                        setRedi(true);
+                    }
+                    else if (ret.data === false) {
+                        alert("You are already in this channel");
+                        window.location.reload();
+                    }    
+                }
             }
-            else if (ret.data === false) {
-                alert("You are already in this channel");
+            else {
+                const ret = await axios.post("chat/addUser", {chanId: chanId, userId: userId});
+                if (ret.data === true) {
+                    alert("You successfully joined a channel");
+                    setRedi(true);
+                }
+                else if (ret.data === false) {
+                    alert("You are already in this channel");
+                    window.location.reload();
+                }
             }
         }
         catch (error) {
@@ -72,6 +97,12 @@ export const JoinConversation = () => {
                         {channels.filter((item: Chan) => item.isDirectConv === false).map((item: Chan) => 
                         <tr key={item.id}>
                             <td>{item.name}</td>
+                            { item.isPrivate ? 
+                                <td>
+                                    <input required id="floatingInput" placeholder="Password" onChange={(e) => {setPassword(e.target.value)}}></input>
+                                </td>
+                                : null
+                            }
                             <td><Button variant="contained" size="small" onClick={((e) => tryJoin(e, item.id, user.id))}> Join </Button></td>
                         </tr>
                         )}
