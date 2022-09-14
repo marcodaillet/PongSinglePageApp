@@ -77,8 +77,14 @@ export class ChatService {
     }
 
     async getUserType(chanId: number, userId: number) {
-        let res = await this.ChatUserRepository.findOne({where: {userId: userId, chatId: chanId}});
-        return (res.userType);
+        try {
+            let res = await this.ChatUserRepository.findOne({where: {userId: userId, chatId: chanId}});
+            return (res.userType);
+        }
+        catch (error) {
+            console.log("Couldn't fetch user type");
+            return (-1);
+        }
     }
     
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

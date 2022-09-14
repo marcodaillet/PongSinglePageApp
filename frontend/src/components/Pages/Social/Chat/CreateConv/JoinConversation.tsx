@@ -46,7 +46,7 @@ export const JoinConversation = () => {
             const chan = await axios.post("chat/getChanById", {chanId: chanId});
             if (chan.data.isPrivate) {
                 const pwd = await axios.post("chat/checkPassword", {chanId: chanId, password: password})
-                if (pwd.data == false) {
+                if (pwd.data === false) {
                     alert("Wrong password");
                     setPassword("");
                     window.location.reload();
