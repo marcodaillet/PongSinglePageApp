@@ -2,8 +2,10 @@ This project is about creating a website for the mighty Pong contest!
 The website backend is written in NestJS, the frontend must be written in React TypeScript and we used a PostgreSQL database.  
 The website is a single-page application working on all browsers and hehaving like a normal website.  
 
-To launch: docker-compose up --build
-
+To launch:
+```
+make
+```
 Here is a list of features implemented in this project:  
 User  
   • The user can login using the OAuth system of 42 intranet.  
