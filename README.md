@@ -31,7 +31,7 @@ Here is a list of features implemented in this project:
 - The game must be responsive!
 - The user can watch a live play between other users without interfering with it.
 
-What I learnt:
+**What I learnt:**
  - Javascript
  - Typescript
  - NestJS/NodeJs
