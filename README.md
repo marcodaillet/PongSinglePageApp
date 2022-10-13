@@ -2,10 +2,8 @@ This project is about creating a website for the mighty Pong contest!
 The website backend is written in NestJS, the frontend is written in React TypeScript and we used a PostgreSQL database.  
 The website is a single-page application working on all browsers and behaving like a normal website.  
 
-To launch:
-```
-make
-```
+To launch: make, And go to 127.0.0.1 in any browser of your choice.
+
 Here is a list of features implemented in this project:
 
 **User**
