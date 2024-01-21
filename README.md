@@ -1,38 +1,79 @@
-This project is about creating a website for the mighty Pong contest!  
-The website backend is written in NestJS, the frontend is written in React TypeScript and we used a PostgreSQL database.  
-The website is a single-page application working on all browsers and behaving like a normal website.  
+# Pong Contest Website
 
-To launch: make, And go to 127.0.0.1 in any browser of your choice.
+Welcome to the mighty Pong Contest website! This project showcases a dynamic web application with a NestJS backend, a React TypeScript frontend, and the power of a PostgreSQL database. The website operates as a seamless single-page application, ensuring compatibility across all browsers while providing a rich user experience.
 
-Here is a list of features implemented in this project:
+## Features:
 
-**User**
-- The user can login using the OAuth system of 42 intranet.
-- The user can personalize his profile (name, avatare, etc).
-- The user can enable two-factor authentication. For instance, Google Authenticator.
-- The user can add other users as friends and see their current status (online, offline, in a game, and so forth).
-- Stats (such as: wins and losses, ladder level, and so forth) are displayed on the user profile.
-- Each user has a Match History that can be consulted by other users.  
+### User
 
-**Chat**
-- The user can create channels (chat rooms) that can be either public, or private, or protected by a password.
-- The user can send direct messages to other users.
-- The user can block other users. This way, they will see no more messages from the account they blocked.
-- The channel owner can set a password required to access the channel, change it, and also remove it.
-- The administrators of a channel can ban or mute users for a limited time.
-- The user can invite other users to play a Pong game through the chat interface.
-- The user can access other players profiles through the chat interface.
+- **OAuth Login:**
+  - Utilize the 42 intranet OAuth system for user authentication.
 
-**Game**
-- Users can play a live Pong game versus another player directly on the website.
-- The user can join a queue until they get automatically matched with someone else.
-- The game must be responsive!
-- The user can watch a live play between other users without interfering with it.
+- **Profile Customization:**
+  - Personalize your profile with details like name, avatar, etc.
 
-**What I learnt:**
- - Javascript
- - Typescript
- - NestJS/NodeJs
- - How to manipulate a PostgreSQL database with TypeOrm
- - React
- - Websockets
+- **Two-Factor Authentication:**
+  - Enhance account security with Google Authenticator-based two-factor authentication.
+
+- **Friendship Management:**
+  - Add other users as friends and monitor their online status, game status, etc.
+
+- **User Stats:**
+  - Display user statistics, including wins and losses, ladder level, and more.
+
+- **Match History:**
+  - Access a comprehensive match history visible to other users.
+
+### Chat
+
+- **Channel Management:**
+  - Create public, private, or password-protected channels.
+
+- **Direct Messaging:**
+  - Exchange direct messages with other users.
+
+- **Blocking Feature:**
+  - Block other users to cease receiving messages from the blocked account.
+
+- **Channel Security:**
+  - Set, change, or remove passwords for channel access.
+
+- **Moderation Capabilities:**
+  - Channel administrators can ban or mute users temporarily.
+
+- **Invitations:**
+  - Invite other users to play a Pong game through the chat interface.
+
+- **User Profiles Access:**
+  - Easily access other players' profiles within the chat interface.
+
+### Game
+
+- **Live Pong Games:**
+  - Engage in live Pong games directly on the website against other players.
+
+- **Matchmaking Queue:**
+  - Join a queue for automatic matching with another player.
+
+- **Responsive Gameplay:**
+  - Enjoy a responsive gaming experience.
+
+- **Spectator Mode:**
+  - Watch live plays between other users without interfering.
+
+## How to Launch:
+
+1. Run `make`.
+2. Access [127.0.0.1](http://127.0.0.1) in any browser of your choice.
+
+## Learning Outcomes:
+
+This project provided an opportunity to delve into various technologies and concepts, including:
+
+- JavaScript and TypeScript
+- NestJS/NodeJs
+- Manipulating PostgreSQL databases with TypeORM
+- React
+- Websockets
+
+Explore, play, and connect with the Pong Contest Website! Your gateway to an immersive online gaming and social experience.
